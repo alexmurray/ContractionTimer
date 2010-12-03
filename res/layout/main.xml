@@ -3,9 +3,23 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<TextView  
+		android:id="@+id/average_time_label" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:text="@string/average_time_label_text"/>
+	<TextView  
+		android:id="@+id/average_time_value" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@id/average_time_label"
+		android:layout_toRightOf="@id/average_time_label"
+		android:layout_marginLeft="5dp"
+		android:text="@string/average_time_value_text"/>
+	<TextView  
 		android:id="@+id/last_time_label" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
+		android:layout_below="@id/average_time_label"
 		android:text="@string/last_time_label_text"/>
 	<TextView  
 		android:id="@+id/last_time_value" 
