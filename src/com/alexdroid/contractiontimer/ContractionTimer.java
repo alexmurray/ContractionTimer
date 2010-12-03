@@ -66,6 +66,7 @@ public class ContractionTimer extends Activity
 		if (mNumContractions > 0) {
 			mAverageTimeMillis /= mNumContractions;
 		}
+		Log.v(TAG, "Calculated mNumContractions: " + mNumContractions + " mAverageTimeMillis: " + mAverageTimeMillis + " mLastTimeMillis: " + mLastTimeMillis);
 	}
 
 	/** Called when the activity is first created. */
@@ -81,7 +82,6 @@ public class ContractionTimer extends Activity
 		mButton = (Button)findViewById(R.id.button);
 		mDataHelper = new DataHelper(this);
 
-		mDataHelper.deleteAll();
 		/* restore state */
 		restoreState();
 

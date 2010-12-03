@@ -11,20 +11,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DataHelper {
+	public static final String ID = "id";
+	public static final String START_TIME = "start_time";
+	public static final String DURATION_TIME = "duration_time";
+
 	private SQLiteDatabase db;
 
 	private static final String TAG = "CTDataHelper";
 	private static final String DATABASE_NAME = "contractiontimer.db";
 	private static final int DATABASE_VERSION = 1;
 	private static final String CONTRACTIONS_TABLE_NAME = "contractions";
-	private static final String KEY_ID = "id";
-	private static final String KEY_START_TIME = "start_time";
-	private static final String KEY_DURATION_TIME = "duration_time";
 	private static final String CONTRACTIONS_TABLE_CREATE =
 		"CREATE TABLE " + CONTRACTIONS_TABLE_NAME + " (" +
-		KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-		KEY_START_TIME + " INTEGER, " +
-		KEY_DURATION_TIME + " INTEGER);";
+		ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+		START_TIME + " INTEGER, " +
+		DURATION_TIME + " INTEGER);";
 
 	public DataHelper(Context context) {
 		CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context);
@@ -34,8 +35,8 @@ public class DataHelper {
 	public long insertContraction(long start, long duration) {
 		ContentValues values = new ContentValues();
 
-		values.put(KEY_START_TIME, start);
-		values.put(KEY_DURATION_TIME, duration);
+		values.put(START_TIME, start);
+		values.put(DURATION_TIME, duration);
 		return db.insert(CONTRACTIONS_TABLE_NAME, null, values);
 	}
 
@@ -43,8 +44,8 @@ public class DataHelper {
 		Contraction contraction = null;
 		try {
 			Cursor cursor = db.query(CONTRACTIONS_TABLE_NAME,
-					new String[]{KEY_ID, KEY_START_TIME, KEY_DURATION_TIME},
-					KEY_ID + " = " + id, null, null, null, null);
+					new String[]{ID, START_TIME, DURATION_TIME},
+					ID + " = " + id, null, null, null, null);
 			/* move to first row */
 			cursor.moveToFirst();	
 
@@ -54,6 +55,8 @@ public class DataHelper {
 						cursor.getLong(1),
 						cursor.getLong(2));
 			}
+			/* finished with cursor */
+			cursor.close();
 		} catch (SQLException e) {
 			Log.e(TAG, "DB Error: " + e.toString());
 			e.printStackTrace();
@@ -66,7 +69,7 @@ public class DataHelper {
 
 		try {
 			Cursor cursor = db.query(CONTRACTIONS_TABLE_NAME,
-					new String[]{KEY_ID, KEY_START_TIME, KEY_DURATION_TIME},
+					new String[]{ID, START_TIME, DURATION_TIME},
 					null, null, null, null, null);
 			/* move to first row */
 			cursor.moveToFirst();	
@@ -79,6 +82,8 @@ public class DataHelper {
 								cursor.getLong(2)));
 				} while (cursor.moveToNext());
 			}
+			/* finished with cursor */
+			cursor.close();
 		} catch (SQLException e) {
 			Log.e(TAG, "DB Error: " + e.toString());
 			e.printStackTrace();
@@ -89,9 +94,9 @@ public class DataHelper {
 	public int deleteContraction(Contraction contraction)
 	{
 			return db.delete(CONTRACTIONS_TABLE_NAME,
-				       	KEY_ID + "=" + contraction.getID() + " AND " +
-				       	KEY_START_TIME + "=" + contraction.getStart() + " AND " +
-				       	KEY_DURATION_TIME + "=" + contraction.getDuration(),
+				       	ID + "=" + contraction.getID() + " AND " +
+				       	START_TIME + "=" + contraction.getStart() + " AND " +
+				       	DURATION_TIME + "=" + contraction.getDuration(),
 				       	null);
 	}
 
