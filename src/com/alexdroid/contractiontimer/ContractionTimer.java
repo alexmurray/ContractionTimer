@@ -16,57 +16,69 @@ public class ContractionTimer extends Activity
 {
 	private static String TAG = "ContractionTimer";
 
-	private boolean mRunning = false;
+	private long mCurrentID = -1, mLastID = -1;
 	private Chronometer mTimer;
 	private Button mButton;
 	private TextView mLastTime, mAverageTime;
 	private ContractionStore mStore;
-	private long mLastTimeMillis, mAverageTimeMillis;
-	private long mNumContractions = 0;
 
-	/* updates UI elements depending on state of mRunning variable */
+	private void setTextViewText(TextView textView, long millis)
+	{
+		if (millis > 0) {
+			textView.setText(android.text.format.DateUtils.formatElapsedTime(millis / 1000));
+		} else {
+			textView.setText(R.string.none_text);
+		}
+	}
+
+	/* updates UI elements depending on state of mCurrentID variable */
 	private void updateUI()
 	{
-		Log.v(TAG, "Updating UI: mRunning=" + mRunning);
-		if (mRunning) {
+		Log.v(TAG, "Updating UI: mCurrentID=" + mCurrentID);
+
+		long lastTimeMillis = 0;
+		long averageTimeMillis = 0;
+		long numContractions = 0;
+
+		/* 1 hour is 60 * 60 * 1000 = 3600000 milliseconds */
+		long recent = 3600000;
+		ArrayList<Contraction> contractions = mStore.getRecentContractions(java.lang.System.currentTimeMillis() - recent);
+		Log.v(TAG, "Calculating average of contractions which occurred in the last " + recent / 1000 + " seconds: " + contractions.toString());
+		Iterator<Contraction> iter = contractions.iterator();
+		while (iter.hasNext())
+		{
+			Contraction c = iter.next();
+			if (c.getID() != mCurrentID)
+			{
+				averageTimeMillis += c.getDuration();
+				numContractions++;
+			}
+		}
+		if (numContractions > 0) {
+			averageTimeMillis /= numContractions;
+		}
+		Log.v(TAG, "Calculated averageTimeMillis: " + averageTimeMillis);
+		setTextViewText(mAverageTime, averageTimeMillis);
+
+		if (mLastID != -1) {
+			lastTimeMillis = mStore.getContraction(mLastID).getDuration();
+		}
+		setTextViewText(mLastTime, lastTimeMillis);
+		if (mCurrentID != -1) {
+			/* set time based on start time of current contraction
+			 */
+			Contraction contraction = mStore.getContraction(mCurrentID);
+			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
+					(java.lang.System.currentTimeMillis() -
+					 contraction.getStart()));
 			mTimer.start();
 			mButton.setText(R.string.stop_text);
 		} else {
 			mTimer.stop();
-			mAverageTime.setText(android.text.format.DateUtils.formatElapsedTime(mAverageTimeMillis / 1000));
-			mLastTime.setText(android.text.format.DateUtils.formatElapsedTime(mLastTimeMillis / 1000));
 			/* clear mTimer display back to zero */
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime());
 			mButton.setText(R.string.start_text);
 		}
-	}
-
-	/* restores state from preferences and database */
-	private void restoreState()
-	{
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		mRunning = settings.getBoolean("running", false);
-		mTimer.setBase(settings.getLong("timerBase", android.os.SystemClock.elapsedRealtime()));
-		Log.v(TAG, "Restored state from preferences: mRunning: " + mRunning + " timerBase: " + mTimer.getBase());
-
-		mAverageTimeMillis = 0;
-		long newestStart = 0;
-		Iterator<Contraction> iter = mStore.getAllContractions().iterator();
-		while (iter.hasNext())
-		{
-			Contraction c = iter.next();
-			mAverageTimeMillis += c.getDuration();
-			mNumContractions++;
-			if (c.getStart() > newestStart)
-			{
-				newestStart = c.getStart();
-				mLastTimeMillis = c.getDuration();
-			}
-		}
-		if (mNumContractions > 0) {
-			mAverageTimeMillis /= mNumContractions;
-		}
-		Log.v(TAG, "Calculated mNumContractions: " + mNumContractions + " mAverageTimeMillis: " + mAverageTimeMillis + " mLastTimeMillis: " + mLastTimeMillis);
 	}
 
 	/** Called when the activity is first created. */
@@ -80,30 +92,25 @@ public class ContractionTimer extends Activity
 		mLastTime = (TextView)findViewById(R.id.last_time_value);
 		mTimer = (Chronometer)findViewById(R.id.timer);
 		mButton = (Button)findViewById(R.id.button);
-		mStore = new ContractionStore(this);
-
-		/* restore state */
-		restoreState();
 
 		/* register listener for click events */
 		mButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mRunning = !mRunning;
-				if (mRunning) {
+				if (mCurrentID == -1) {
+					/* start a contraction at the current
+					 * time */
+					mCurrentID = mStore.startContraction(java.lang.System.currentTimeMillis());
 					/* set mTimer to count from now */
 					mTimer.setBase(android.os.SystemClock.elapsedRealtime());
+					Log.v(TAG, "Started contraction: " + mStore.getAllContractions().toString());
 				} else {
 					long duration = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
-					long start = java.lang.System.currentTimeMillis();
 
-					if (mStore.insertContraction(start, duration) != -1) {
-						mLastTimeMillis = duration;
-						/* update average */
-						mAverageTimeMillis *= mNumContractions;
-						mAverageTimeMillis += mLastTimeMillis;
-						mAverageTimeMillis /= ++mNumContractions;
-					}
-					Log.v(TAG, "Contractions: " + mStore.getAllContractions().toString());
+					mStore.setDuration(mCurrentID, duration);
+					/* no current contraction now */
+					mLastID = mCurrentID;
+					mCurrentID = -1;
+					Log.v(TAG, "End Contraction: " + mStore.getAllContractions().toString());
 				}
 				updateUI();
 			}
@@ -111,9 +118,18 @@ public class ContractionTimer extends Activity
 	}
 
 	@Override
-	protected void onStart()
+	protected void onResume()
 	{
-		super.onStart();
+		super.onResume();
+
+		Log.v(TAG, "onResume");
+		mStore = new ContractionStore(this);
+
+		/* restore state */
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		mCurrentID = settings.getLong("currentID", -1);
+		mLastID = settings.getLong("lastID", -1);
+		Log.v(TAG, "Restored state from preferences: mCurrentID: " + mCurrentID + " mLastID: " + mLastID);
 
 		/* update our UI */
 		updateUI();
@@ -124,12 +140,14 @@ public class ContractionTimer extends Activity
 	{
 		super.onPause();
 
-		Log.v(TAG, "Saving state to preferences: mRunning: " + mRunning + " timerBase: " + mTimer.getBase());
+		Log.v(TAG, "onPause");
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean("running", mRunning);
-		editor.putLong("timerBase", mTimer.getBase());
+		editor.putLong("currentID", mCurrentID);
+		editor.putLong("lastID", mLastID);
 
 		editor.commit();
+		Log.v(TAG, "Saved state to preferences: mCurrentID: " + mCurrentID + " mLastID: " + mLastID);
+		mStore.close();
 	}
 }

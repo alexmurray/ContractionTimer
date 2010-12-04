@@ -13,8 +13,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@id/average_time_label"
 		android:layout_toRightOf="@id/average_time_label"
-		android:layout_marginLeft="5dp"
-		android:text="@string/average_time_value_text"/>
+		android:layout_marginLeft="5dp"/>
 	<TextView  
 		android:id="@+id/last_time_label" 
 		android:layout_width="wrap_content" 
@@ -27,8 +26,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignTop="@id/last_time_label"
 		android:layout_toRightOf="@id/last_time_label"
-		android:layout_marginLeft="5dp"
-		android:text="@string/last_time_value_text"/>
+		android:layout_marginLeft="5dp"/>
 	<Chronometer  
 		android:id="@+id/timer" 
 		android:layout_width="wrap_content" 

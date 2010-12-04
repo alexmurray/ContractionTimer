@@ -4,7 +4,6 @@
     <string name="start_text">Start</string>
     <string name="stop_text">Stop</string>
     <string name="average_time_label_text">Average duration:</string>
-    <string name="average_time_value_text">None</string>
     <string name="last_time_label_text">Last duration:</string>
-    <string name="last_time_value_text">None</string>
+    <string name="none_text">None</string>
 </resources>

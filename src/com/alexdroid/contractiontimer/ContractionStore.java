@@ -32,12 +32,23 @@ public class ContractionStore {
 		this.db = helper.getWritableDatabase();
 	}
 
-	public long insertContraction(long start, long duration) {
+	public void close() {
+		this.db.close();
+	}
+
+	public long startContraction(long start) {
 		ContentValues values = new ContentValues();
 
 		values.put(START_TIME, start);
-		values.put(DURATION_TIME, duration);
 		return db.insert(CONTRACTIONS_TABLE_NAME, null, values);
+	}
+
+	public boolean setDuration(long id, long duration) {
+		ContentValues values = new ContentValues();
+
+		values.put(DURATION_TIME, duration);
+		return (db.update(CONTRACTIONS_TABLE_NAME, values,
+				ID + " = " + id, null) == 1);
 	}
 
 	public Contraction getContraction(long id) {
@@ -51,9 +62,9 @@ public class ContractionStore {
 
 			if (!cursor.isAfterLast())
 			{
-				contraction = new Contraction(cursor.getLong(0),
-						cursor.getLong(1),
-						cursor.getLong(2));
+                                contraction = new Contraction(cursor.getLong(0),
+                                                cursor.getLong(1),
+                                                cursor.getLong(2));
 			}
 			/* finished with cursor */
 			cursor.close();
@@ -64,13 +75,13 @@ public class ContractionStore {
 		return contraction;
 	}
 
-	public ArrayList<Contraction> getAllContractions() {
+	public ArrayList<Contraction> getRecentContractions(long start) {
 		ArrayList<Contraction> contractions = new ArrayList<Contraction>();
 
 		try {
 			Cursor cursor = db.query(CONTRACTIONS_TABLE_NAME,
 					new String[]{ID, START_TIME, DURATION_TIME},
-					null, null, null, null, null);
+					START_TIME + " > " + start, null, null, null, null);
 			/* move to first row */
 			cursor.moveToFirst();	
 
@@ -89,6 +100,10 @@ public class ContractionStore {
 			e.printStackTrace();
 		}
 		return contractions;
+	}
+
+	public ArrayList<Contraction> getAllContractions() {
+		return getRecentContractions(0);
 	}
 
 	public int deleteContraction(Contraction contraction)
