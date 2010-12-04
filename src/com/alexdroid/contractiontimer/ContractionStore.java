@@ -10,14 +10,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DataHelper {
+public class ContractionStore {
 	public static final String ID = "id";
 	public static final String START_TIME = "start_time";
 	public static final String DURATION_TIME = "duration_time";
 
 	private SQLiteDatabase db;
 
-	private static final String TAG = "CTDataHelper";
+	private static final String TAG = "CTContractionStore";
 	private static final String DATABASE_NAME = "contractiontimer.db";
 	private static final int DATABASE_VERSION = 1;
 	private static final String CONTRACTIONS_TABLE_NAME = "contractions";
@@ -27,7 +27,7 @@ public class DataHelper {
 		START_TIME + " INTEGER, " +
 		DURATION_TIME + " INTEGER);";
 
-	public DataHelper(Context context) {
+	public ContractionStore(Context context) {
 		CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context);
 		this.db = helper.getWritableDatabase();
 	}

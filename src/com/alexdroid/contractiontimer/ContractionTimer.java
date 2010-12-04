@@ -20,7 +20,7 @@ public class ContractionTimer extends Activity
 	private Chronometer mTimer;
 	private Button mButton;
 	private TextView mLastTime, mAverageTime;
-	private DataHelper mDataHelper;
+	private ContractionStore mStore;
 	private long mLastTimeMillis, mAverageTimeMillis;
 	private long mNumContractions = 0;
 
@@ -51,7 +51,7 @@ public class ContractionTimer extends Activity
 
 		mAverageTimeMillis = 0;
 		long newestStart = 0;
-		Iterator<Contraction> iter = mDataHelper.getAllContractions().iterator();
+		Iterator<Contraction> iter = mStore.getAllContractions().iterator();
 		while (iter.hasNext())
 		{
 			Contraction c = iter.next();
@@ -80,7 +80,7 @@ public class ContractionTimer extends Activity
 		mLastTime = (TextView)findViewById(R.id.last_time_value);
 		mTimer = (Chronometer)findViewById(R.id.timer);
 		mButton = (Button)findViewById(R.id.button);
-		mDataHelper = new DataHelper(this);
+		mStore = new ContractionStore(this);
 
 		/* restore state */
 		restoreState();
@@ -96,14 +96,14 @@ public class ContractionTimer extends Activity
 					long duration = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
 					long start = java.lang.System.currentTimeMillis();
 
-					if (mDataHelper.insertContraction(start, duration) != -1) {
+					if (mStore.insertContraction(start, duration) != -1) {
 						mLastTimeMillis = duration;
 						/* update average */
 						mAverageTimeMillis *= mNumContractions;
 						mAverageTimeMillis += mLastTimeMillis;
 						mAverageTimeMillis /= ++mNumContractions;
 					}
-					Log.v(TAG, "Contractions: " + mDataHelper.getAllContractions().toString());
+					Log.v(TAG, "Contractions: " + mStore.getAllContractions().toString());
 				}
 				updateUI();
 			}
