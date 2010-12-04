@@ -29,11 +29,13 @@ public class ContractionStore {
 
 	public ContractionStore(Context context) {
 		CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context);
-		this.db = helper.getWritableDatabase();
+		db = helper.getWritableDatabase();
+		/* we only access from a single thread */
+		db.setLockingEnabled(false);
 	}
 
 	public void close() {
-		this.db.close();
+		db.close();
 	}
 
 	public long startContraction(long start) {

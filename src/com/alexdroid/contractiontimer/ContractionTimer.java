@@ -102,7 +102,6 @@ public class ContractionTimer extends Activity
 					mCurrentID = mStore.startContraction(java.lang.System.currentTimeMillis());
 					/* set mTimer to count from now */
 					mTimer.setBase(android.os.SystemClock.elapsedRealtime());
-					Log.v(TAG, "Started contraction: " + mStore.getAllContractions().toString());
 				} else {
 					long duration = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
 
@@ -110,7 +109,6 @@ public class ContractionTimer extends Activity
 					/* no current contraction now */
 					mLastID = mCurrentID;
 					mCurrentID = -1;
-					Log.v(TAG, "End Contraction: " + mStore.getAllContractions().toString());
 				}
 				updateUI();
 			}
