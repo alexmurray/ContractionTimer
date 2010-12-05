@@ -1,7 +1,7 @@
 package com.alexdroid.contractiontimer;
 
 import java.util.ArrayList;
- 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -50,7 +50,7 @@ public class ContractionStore {
 
 		values.put(DURATION_TIME, duration);
 		return (db.update(CONTRACTIONS_TABLE_NAME, values,
-				ID + " = " + id, null) == 1);
+					ID + " = " + id, null) == 1);
 	}
 
 	public Contraction getContraction(long id) {
@@ -64,9 +64,9 @@ public class ContractionStore {
 
 			if (!cursor.isAfterLast())
 			{
-                                contraction = new Contraction(cursor.getLong(0),
-                                                cursor.getLong(1),
-                                                cursor.getLong(2));
+				contraction = new Contraction(cursor.getLong(0),
+						cursor.getLong(1),
+						cursor.getLong(2));
 			}
 			/* finished with cursor */
 			cursor.close();
@@ -110,16 +110,16 @@ public class ContractionStore {
 
 	public int deleteContraction(Contraction contraction)
 	{
-			return db.delete(CONTRACTIONS_TABLE_NAME,
-				       	ID + "=" + contraction.getID() + " AND " +
-				       	START_TIME + "=" + contraction.getStart() + " AND " +
-				       	DURATION_TIME + "=" + contraction.getDuration(),
-				       	null);
+		return db.delete(CONTRACTIONS_TABLE_NAME,
+				ID + "=" + contraction.getID() + " AND " +
+				START_TIME + "=" + contraction.getStart() + " AND " +
+				DURATION_TIME + "=" + contraction.getDuration(),
+				null);
 	}
 
 	public int deleteAll()
 	{
-			return db.delete(CONTRACTIONS_TABLE_NAME, null, null);
+		return db.delete(CONTRACTIONS_TABLE_NAME, null, null);
 	}
 
 	private class CustomSQLiteOpenHelper extends SQLiteOpenHelper {

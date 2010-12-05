@@ -22,15 +22,6 @@ public class ContractionTimer extends Activity
 	private TextView mLastTime, mAverageTime;
 	private ContractionStore mStore;
 
-	private void setTextViewText(TextView textView, long millis)
-	{
-		if (millis > 0) {
-			textView.setText(android.text.format.DateUtils.formatElapsedTime(millis / 1000));
-		} else {
-			textView.setText(R.string.none_text);
-		}
-	}
-
 	/* updates UI elements depending on state of mCurrentID variable */
 	private void updateUI()
 	{
@@ -58,15 +49,19 @@ public class ContractionTimer extends Activity
 			averageTimeMillis /= numContractions;
 		}
 		Log.v(TAG, "Calculated averageTimeMillis: " + averageTimeMillis);
-		setTextViewText(mAverageTime, averageTimeMillis);
+		mAverageTime.setText(averageTimeMillis > 0 ?
+				android.text.format.DateUtils.formatElapsedTime(averageTimeMillis / 1000) :
+				this.getString(R.string.none_text));
 
 		if (mLastID != -1) {
 			lastTimeMillis = mStore.getContraction(mLastID).getDuration();
 		}
-		setTextViewText(mLastTime, lastTimeMillis);
+		mLastTime.setText(averageTimeMillis > 0 ?
+				android.text.format.DateUtils.formatElapsedTime(averageTimeMillis / 1000) :
+				this.getString(R.string.none_text));
 		if (mCurrentID != -1) {
 			/* set time based on start time of current contraction
-			 */
+			*/
 			Contraction contraction = mStore.getContraction(mCurrentID);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
 					(java.lang.System.currentTimeMillis() -
