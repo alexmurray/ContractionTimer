@@ -7,6 +7,9 @@ import android.widget.TextView;
 import android.widget.Chronometer;
 import android.widget.Button;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -142,5 +145,26 @@ public class ContractionTimer extends Activity
 		editor.commit();
 		Log.v(TAG, "Saved state to preferences: mCurrentID: " + mCurrentID + " mLastID: " + mLastID);
 		mStore.close();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.contractiontimer, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.delete_menu_item:
+				mStore.deleteAll();
+				mLastID = -1;
+				mCurrentID = -1;
+				updateUI();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 }
