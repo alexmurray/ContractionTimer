@@ -2,14 +2,14 @@ package com.alexdroid.contractiontimer;
 
 public class Contraction {
 	private long id;
-	private long start;
-	private long duration;
+	private long startMillis;
+	private long lengthMillis;
 
-	public Contraction(long id, long start, long duration)
+	public Contraction(long id, long startMillis, long lengthMillis)
 	{
 		this.id = id;
-		this.start = start;
-		this.duration = duration;
+		this.startMillis = startMillis;
+		this.lengthMillis = lengthMillis;
 	}
 
 	public long getID()
@@ -17,20 +17,20 @@ public class Contraction {
 		return id;
 	}
 
-	public long getStart()
+	public long getStartMillis()
 	{
-		return start;
+		return startMillis;
 	}
 
-	public long getDuration()
+	public long getLengthMillis()
 	{
-		return duration;
+		return lengthMillis;
 	}
 
 	public String toString()
 	{
-		return android.text.format.DateFormat.format("MMM dd, yyyy h:mmaa", start) + ": " +
-			android.text.format.DateUtils.formatElapsedTime(duration / 1000);
+		return android.text.format.DateFormat.format("MMM dd, yyyy h:mmaa", startMillis) + ": " +
+			android.text.format.DateUtils.formatElapsedTime(lengthMillis / 1000);
 	}
 }
 

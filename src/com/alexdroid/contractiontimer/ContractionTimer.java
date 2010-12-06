@@ -45,7 +45,7 @@ public class ContractionTimer extends Activity
 			Contraction c = iter.next();
 			if (c.getID() != mCurrentID)
 			{
-				averageTimeMillis += c.getDuration();
+				averageTimeMillis += c.getLengthMillis();
 				numContractions++;
 			}
 		}
@@ -53,23 +53,23 @@ public class ContractionTimer extends Activity
 			averageTimeMillis /= numContractions;
 		}
 		Log.v(TAG, "Calculated averageTimeMillis: " + averageTimeMillis);
-		mAverageTime.setText(averageTimeMillis > 0 ?
-				android.text.format.DateUtils.formatElapsedTime(averageTimeMillis / 1000) :
-				this.getString(R.string.none_text));
+		if (averageTimeMillis > 0) {
+				mAverageTime.setText(android.text.format.DateUtils.formatElapsedTime(averageTimeMillis / 1000));
+		}
 
 		if (mLastID != -1) {
-			lastTimeMillis = mStore.getContraction(mLastID).getDuration();
+			lastTimeMillis = mStore.getContraction(mLastID).getLengthMillis();
 		}
-		mLastTime.setText(lastTimeMillis > 0 ?
-				android.text.format.DateUtils.formatElapsedTime(lastTimeMillis / 1000) :
-				this.getString(R.string.none_text));
+		if (lastTimeMillis > 0) {
+				mLastTime.setText(android.text.format.DateUtils.formatElapsedTime(lastTimeMillis / 1000));
+		}
 		if (mCurrentID != -1) {
 			/* set time based on start time of current contraction
 			*/
 			Contraction contraction = mStore.getContraction(mCurrentID);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
 					(java.lang.System.currentTimeMillis() -
-					 contraction.getStart()));
+					 contraction.getStartMillis()));
 			mTimer.start();
 			mButton.setText(R.string.stop_text);
 		} else {
@@ -87,8 +87,8 @@ public class ContractionTimer extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mAverageTime = (TextView)findViewById(R.id.average_time_value);
-		mLastTime = (TextView)findViewById(R.id.last_time_value);
+		mAverageTime = (TextView)findViewById(R.id.average_length_value);
+		mLastTime = (TextView)findViewById(R.id.previous_length_value);
 		mTimer = (Chronometer)findViewById(R.id.timer);
 		mButton = (Button)findViewById(R.id.button);
 
@@ -102,9 +102,9 @@ public class ContractionTimer extends Activity
 					/* set mTimer to count from now */
 					mTimer.setBase(android.os.SystemClock.elapsedRealtime());
 				} else {
-					long duration = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
+					long length = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
 
-					mStore.setDuration(mCurrentID, duration);
+					mStore.setlength(mCurrentID, length);
 					/* no current contraction now */
 					mLastID = mCurrentID;
 					mCurrentID = -1;
