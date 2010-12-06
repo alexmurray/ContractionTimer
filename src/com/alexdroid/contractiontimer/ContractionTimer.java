@@ -1,7 +1,8 @@
 package com.alexdroid.contractiontimer;
 
-import android.content.SharedPreferences;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Chronometer;
@@ -157,6 +158,9 @@ public class ContractionTimer extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.view_contractions_menu_item:
+				startActivity(new Intent(this, ContractionList.class));
+				return true;
 			case R.id.delete_menu_item:
 				mStore.deleteAll();
 				mLastID = -1;

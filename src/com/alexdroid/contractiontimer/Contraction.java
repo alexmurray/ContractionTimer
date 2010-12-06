@@ -29,7 +29,8 @@ public class Contraction {
 
 	public String toString()
 	{
-		return new String("id: " + id + " start: " + start + " duration: " + duration);
+		return android.text.format.DateFormat.format("MMM dd, yyyy h:mmaa", start) + ": " +
+			android.text.format.DateUtils.formatElapsedTime(duration / 1000);
 	}
 }
 
