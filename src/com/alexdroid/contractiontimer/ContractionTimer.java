@@ -59,8 +59,8 @@ public class ContractionTimer extends Activity
 		if (mLastID != -1) {
 			lastTimeMillis = mStore.getContraction(mLastID).getDuration();
 		}
-		mLastTime.setText(averageTimeMillis > 0 ?
-				android.text.format.DateUtils.formatElapsedTime(averageTimeMillis / 1000) :
+		mLastTime.setText(lastTimeMillis > 0 ?
+				android.text.format.DateUtils.formatElapsedTime(lastTimeMillis / 1000) :
 				this.getString(R.string.none_text));
 		if (mCurrentID != -1) {
 			/* set time based on start time of current contraction
