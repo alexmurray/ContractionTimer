@@ -18,11 +18,25 @@ public class ContractionGraphView extends View {
 	private long mMaxLengthMillis;
 	private long mMinMillis;
 	private long mMaxMillis;
+	/* dp per millisecond */
+	private float mResolution = 0.01f;
 
 	public ContractionGraphView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mDrawable = new ShapeDrawable();
 		mDrawable.getPaint().setColor(0xff74AC23);
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+		/* set our width depending on size */
+		int w = (int)((mMaxMillis - mMinMillis) * mResolution);
+		int h = getMeasuredHeight();
+		Log.v(TAG, "onMeasure: w = " + w + " h = " + h);
+		setMeasuredDimension(w, h);
+		mDrawable.setBounds(0, 0, w, h);
 	}
 
 	@Override
@@ -52,7 +66,6 @@ public class ContractionGraphView extends View {
 			path.close();
 		}
 
-		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.setShape(new PathShape(path, w, h));
 		mDrawable.draw(canvas);
 	}
@@ -77,8 +90,8 @@ public class ContractionGraphView extends View {
 				mMaxMillis = maxMillis;
 			}
 		}
-		/* schedule redraw */
-		Log.v(TAG, "Scheduling redraw");
-		this.invalidate();
+		Log.v(TAG, "setContractions: mMinMillis = " + mMinMillis + " mMaxMillis = " + mMaxMillis);
+		/* schedule relayout and hence redraw */
+		this.requestLayout();
 	}
 }
