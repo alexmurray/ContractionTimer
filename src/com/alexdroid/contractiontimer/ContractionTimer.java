@@ -53,10 +53,13 @@ public class ContractionTimer extends Activity
 			}
 		}
 		Log.v(TAG, "Updating UI: current = " + current + " previous = " + previous);
+		mPreviousLength.setText(previous != null ?
+				android.text.format.DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000) :
+				null);
 		Log.v(TAG, "previousPeriodMillis = " + previousPeriodMillis);
-		if (previousPeriodMillis > 0) {
-			mPreviousPeriod.setText(android.text.format.DateUtils.formatElapsedTime(previousPeriodMillis / 1000));
-		}
+		mPreviousPeriod.setText(previousPeriodMillis > 0 ?
+				android.text.format.DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
+				null);
 
 		/* 1 hour is 60 * 60 * 1000 = 3600000 milliseconds */
 		long recent = 3600000;
@@ -86,16 +89,13 @@ public class ContractionTimer extends Activity
 			averagePeriodMillis /= numPeriods;
 		}
 		Log.v(TAG, "Calculated averageLengthMillis = " + averageLengthMillis + " averagePeriodMillis = " + averagePeriodMillis);
-		if (averageLengthMillis > 0) {
-			mAverageLength.setText(android.text.format.DateUtils.formatElapsedTime(averageLengthMillis / 1000));
-		}
-		if (averagePeriodMillis > 0) {
-			mAveragePeriod.setText(android.text.format.DateUtils.formatElapsedTime(averagePeriodMillis / 1000));
-		}
+		mAverageLength.setText(averageLengthMillis > 0 ?
+				android.text.format.DateUtils.formatElapsedTime(averageLengthMillis / 1000) :
+				null);
+		mAveragePeriod.setText(averagePeriodMillis > 0 ?
+				android.text.format.DateUtils.formatElapsedTime(averagePeriodMillis / 1000) :
+				null);
 
-		if (previous != null) {
-			mPreviousLength.setText(android.text.format.DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000));
-		}
 		if (current != null) {
 			/* set time based on start time of current contraction
 			*/
