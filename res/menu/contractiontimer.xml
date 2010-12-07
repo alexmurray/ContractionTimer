@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/view_contractions_menu_item"
+    <item android:id="@+id/list_contractions_menu_item"
           android:icon="@android:drawable/ic_menu_recent_history"
-          android:title="@string/view_contractions_menu_item_text" />
+          android:title="@string/list_contractions_menu_item_text" />
     <item android:id="@+id/graph_contractions_menu_item"
           android:icon="@android:drawable/ic_menu_recent_history"
           android:title="@string/graph_contractions_menu_item_text" />
