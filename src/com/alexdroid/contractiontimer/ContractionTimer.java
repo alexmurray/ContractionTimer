@@ -2,7 +2,6 @@ package com.alexdroid.contractiontimer;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Chronometer;
@@ -20,56 +19,89 @@ public class ContractionTimer extends Activity
 {
 	private static String TAG = "ContractionTimer";
 
-	private long mCurrentID = -1, mLastID = -1;
 	private Chronometer mTimer;
 	private Button mButton;
-	private TextView mLastTime, mAverageTime;
+	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod;
 	private ContractionStore mStore;
 
-	/* updates UI elements depending on state of mCurrentID variable */
 	private void updateUI()
 	{
-		Log.v(TAG, "Updating UI: mCurrentID=" + mCurrentID);
-
-		long lastTimeMillis = 0;
-		long averageTimeMillis = 0;
+		long previousLengthMillis = 0;
+		long previousPeriodMillis = 0;
+		long averageLengthMillis = 0;
+		long averagePeriodMillis = 0;
 		long numContractions = 0;
+		long numPeriods = 0;
+		Contraction current = null;
+		Contraction previous = null;
+
+		/* get the two most recent contractions */
+		ArrayList<Contraction> contractions = mStore.getRecentContractions(0, 2);
+		if (contractions.size() > 0) {
+			Contraction contraction = contractions.get(0);
+			if (contraction.getLengthMillis() == 0) {
+				/* we have a current contraction */
+				current = contraction;
+				if (contractions.size() > 1) {
+					previous = contractions.get(1);
+				}
+			} else {
+				previous = contraction;
+			}
+			if (contractions.size() > 1) {
+				previousPeriodMillis = contractions.get(0).getStartMillis() - contractions.get(1).getStartMillis();
+			}
+		}
+		Log.v(TAG, "Updating UI: current = " + current + " previous = " + previous);
+		Log.v(TAG, "previousPeriodMillis = " + previousPeriodMillis);
+		if (previousPeriodMillis > 0) {
+			mPreviousPeriod.setText(android.text.format.DateUtils.formatElapsedTime(previousPeriodMillis / 1000));
+		}
 
 		/* 1 hour is 60 * 60 * 1000 = 3600000 milliseconds */
 		long recent = 3600000;
-		ArrayList<Contraction> contractions = mStore.getRecentContractions(java.lang.System.currentTimeMillis() - recent);
-		Log.v(TAG, "Calculating average of contractions which occurred in the last " + recent / 1000 + " seconds: " + contractions.toString());
+		contractions = mStore.getRecentContractions(java.lang.System.currentTimeMillis() - recent, -1);
+		Log.v(TAG, "Calculating averages of contractions which occurred in the last " + recent / 1000 + " seconds: " + contractions.toString());
 		Iterator<Contraction> iter = contractions.iterator();
+		Contraction prev = null;
 		while (iter.hasNext())
 		{
 			Contraction c = iter.next();
-			if (c.getID() != mCurrentID)
-			{
-				averageTimeMillis += c.getLengthMillis();
+			if (c != current) {
+				averageLengthMillis += c.getLengthMillis();
 				numContractions++;
 			}
+			if (prev != null) {
+				/* contractions are sorted newest to oldest so prev actually
+				 * occurred before c */
+				averagePeriodMillis += prev.getStartMillis() - c.getStartMillis();
+				numPeriods++;
+			}
+			prev = c;
 		}
 		if (numContractions > 0) {
-			averageTimeMillis /= numContractions;
+			averageLengthMillis /= numContractions;
 		}
-		Log.v(TAG, "Calculated averageTimeMillis: " + averageTimeMillis);
-		if (averageTimeMillis > 0) {
-				mAverageTime.setText(android.text.format.DateUtils.formatElapsedTime(averageTimeMillis / 1000));
+		if (numPeriods > 0) {
+			averagePeriodMillis /= numPeriods;
+		}
+		Log.v(TAG, "Calculated averageLengthMillis = " + averageLengthMillis + " averagePeriodMillis = " + averagePeriodMillis);
+		if (averageLengthMillis > 0) {
+			mAverageLength.setText(android.text.format.DateUtils.formatElapsedTime(averageLengthMillis / 1000));
+		}
+		if (averagePeriodMillis > 0) {
+			mAveragePeriod.setText(android.text.format.DateUtils.formatElapsedTime(averagePeriodMillis / 1000));
 		}
 
-		if (mLastID != -1) {
-			lastTimeMillis = mStore.getContraction(mLastID).getLengthMillis();
+		if (previous != null) {
+			mPreviousLength.setText(android.text.format.DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000));
 		}
-		if (lastTimeMillis > 0) {
-				mLastTime.setText(android.text.format.DateUtils.formatElapsedTime(lastTimeMillis / 1000));
-		}
-		if (mCurrentID != -1) {
+		if (current != null) {
 			/* set time based on start time of current contraction
 			*/
-			Contraction contraction = mStore.getContraction(mCurrentID);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
 					(java.lang.System.currentTimeMillis() -
-					 contraction.getStartMillis()));
+					 current.getStartMillis()));
 			mTimer.start();
 			mButton.setText(R.string.stop_text);
 		} else {
@@ -87,27 +119,32 @@ public class ContractionTimer extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mAverageTime = (TextView)findViewById(R.id.average_length_value);
-		mLastTime = (TextView)findViewById(R.id.previous_length_value);
+		mAverageLength = (TextView)findViewById(R.id.average_length_value);
+		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
+		mAveragePeriod = (TextView)findViewById(R.id.average_period_value);
+		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
 		mTimer = (Chronometer)findViewById(R.id.timer);
 		mButton = (Button)findViewById(R.id.button);
 
 		/* register listener for click events */
 		mButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (mCurrentID == -1) {
+				/* see if we are in the middle of a contraction */
+				ArrayList<Contraction> contractions = mStore.getRecentContractions(0, 1);
+				Contraction contraction = contractions.size() > 0 ? contractions.get(0) : null;
+				if (contraction == null ||
+					contraction.getLengthMillis() > 0) {
 					/* start a contraction at the current
 					 * time */
-					mCurrentID = mStore.startContraction(java.lang.System.currentTimeMillis());
+					long id = mStore.startContraction(java.lang.System.currentTimeMillis());
+					Log.v(TAG, "Created new contraction " + mStore.getContraction(id));
 					/* set mTimer to count from now */
 					mTimer.setBase(android.os.SystemClock.elapsedRealtime());
 				} else {
 					long length = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
 
-					mStore.setlength(mCurrentID, length);
-					/* no current contraction now */
-					mLastID = mCurrentID;
-					mCurrentID = -1;
+					mStore.setlength(contraction.getID(), length);
+					Log.v(TAG, "Set length of contraction " + mStore.getContraction(contraction.getID()));
 				}
 				updateUI();
 			}
@@ -122,12 +159,6 @@ public class ContractionTimer extends Activity
 		Log.v(TAG, "onResume");
 		mStore = new ContractionStore(this);
 
-		/* restore state */
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		mCurrentID = settings.getLong("currentID", -1);
-		mLastID = settings.getLong("lastID", -1);
-		Log.v(TAG, "Restored state from preferences: mCurrentID: " + mCurrentID + " mLastID: " + mLastID);
-
 		/* update our UI */
 		updateUI();
 	}
@@ -138,13 +169,6 @@ public class ContractionTimer extends Activity
 		super.onPause();
 
 		Log.v(TAG, "onPause");
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putLong("currentID", mCurrentID);
-		editor.putLong("lastID", mLastID);
-
-		editor.commit();
-		Log.v(TAG, "Saved state to preferences: mCurrentID: " + mCurrentID + " mLastID: " + mLastID);
 		mStore.close();
 	}
 
@@ -163,8 +187,6 @@ public class ContractionTimer extends Activity
 				return true;
 			case R.id.delete_menu_item:
 				mStore.deleteAll();
-				mLastID = -1;
-				mCurrentID = -1;
 				updateUI();
 				return true;
 			default:

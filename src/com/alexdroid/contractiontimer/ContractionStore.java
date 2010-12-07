@@ -84,12 +84,19 @@ public class ContractionStore {
 		return getContractions(ID + " = " + id, null, null, null, null, null).get(0);
 	}
 
-	public ArrayList<Contraction> getRecentContractions(long start) {
-		return getContractions(START_MILLIS + " >= " + start, null, null, null, null, null);
+	/**
+	 * Returns an ArrayList of n contractions, which started after start sorted
+	 * from newest to oldest - if n is less than or equal to zero returns all
+	 */
+	public ArrayList<Contraction> getRecentContractions(long start, int n) {
+		return getContractions(START_MILLIS + " >= " + start, null, null, null, START_MILLIS + " DESC", n > 0 ? Integer.toString(n) : null);
 	}
 
+	/**
+	 * Returns an ArrayList of all contractions, sorted from oldest to newest
+	 */
 	public ArrayList<Contraction> getAllContractions() {
-		return getContractions(null, null, null, null, null, null);
+		return getContractions(null, null, null, null, START_MILLIS + " ASC", null);
 	}
 
 	public int deleteAll()
