@@ -174,8 +174,17 @@ public class ContractionTimer extends Activity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.contractiontimer, menu);
+		getMenuInflater().inflate(R.menu.contractiontimer, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		/* set state of delete / view contractions depending on if have any
+		 * available */
+		boolean available = ((mStore.getRecentContractions(0, 1)).size() > 0);
+		menu.findItem(R.id.view_contractions_menu_item).setEnabled(available);
+		menu.findItem(R.id.delete_menu_item).setEnabled(available);
 		return true;
 	}
 
