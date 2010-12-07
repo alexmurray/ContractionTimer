@@ -65,11 +65,8 @@ public class ContractionTimer extends Activity
 		long recent = 3600000;
 		contractions = mStore.getRecentContractions(java.lang.System.currentTimeMillis() - recent, -1);
 		Log.v(TAG, "Calculating averages of contractions which occurred in the last " + recent / 1000 + " seconds: " + contractions.toString());
-		Iterator<Contraction> iter = contractions.iterator();
 		Contraction prev = null;
-		while (iter.hasNext())
-		{
-			Contraction c = iter.next();
+		for (Contraction c : contractions) {
 			if (c != current) {
 				averageLengthMillis += c.getLengthMillis();
 				numContractions++;
