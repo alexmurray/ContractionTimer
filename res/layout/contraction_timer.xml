@@ -107,7 +107,7 @@
 				android:textStyle="bold" 
 				android:textSize="65sp"/>
 		</LinearLayout>
-		<Button  
+		<ToggleButton
 			android:id="@+id/button" 
 			android:layout_width="180dp" 
 			android:layout_height="wrap_content" 
