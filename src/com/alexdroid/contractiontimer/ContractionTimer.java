@@ -17,7 +17,7 @@ import java.util.Iterator;
 
 public class ContractionTimer extends Activity
 {
-	private static String TAG = "ContractionTimer";
+	private static final String TAG = "ContractionTimer";
 
 	private Chronometer mTimer;
 	private Button mButton;
