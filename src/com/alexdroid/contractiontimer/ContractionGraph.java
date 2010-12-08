@@ -29,6 +29,14 @@ public class ContractionGraph extends Activity {
 		mGraphView.setOnTouchListener(new View.OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				/* show controls and hide in 5 seconds */
+				boolean enableZoomIn = mGraphView.getCanZoomIn();
+				boolean enableZoomOut = mGraphView.getCanZoomOut();
+				if (!(enableZoomIn || enableZoomOut)) {
+					/* neither can zoom so don't bother showing controls */
+					return false;
+				}
+				mControls.setIsZoomInEnabled(enableZoomIn);
+				mControls.setIsZoomOutEnabled(enableZoomOut);
 				mControls.show();
 				if (mTimer != null) {
 					mTimer.cancel();
@@ -49,12 +57,16 @@ public class ContractionGraph extends Activity {
 
 		mControls.setOnZoomInClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mGraphView.setResolution(mGraphView.getResolution() * (float)2.0);
+				mGraphView.zoom(2.0);
+				mControls.setIsZoomInEnabled(mGraphView.getCanZoomIn());
+				mControls.setIsZoomOutEnabled(mGraphView.getCanZoomOut());
 			}
 		});
 		mControls.setOnZoomOutClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mGraphView.setResolution(mGraphView.getResolution() / (float)2.0);
+				mGraphView.zoom(0.5);
+				mControls.setIsZoomInEnabled(mGraphView.getCanZoomIn());
+				mControls.setIsZoomOutEnabled(mGraphView.getCanZoomOut());
 			}
 		});
 		mControls.hide();
