@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 public class ContractionGraph extends Activity {
 	private ContractionGraphView mGraphView;
-	private ContractionStore mStore;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -13,19 +12,8 @@ public class ContractionGraph extends Activity {
 		setContentView(R.layout.contraction_graph);
 
 		mGraphView = (ContractionGraphView)findViewById(R.id.contraction_graph_view);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		mStore = new ContractionStore(this);
-		mGraphView.setContractions(mStore.getAllContractions());
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		mStore.close();
+		ContractionStore store = new ContractionStore(this);
+		mGraphView.setContractions(store.getAllContractions());
+		store.close();
 	}
 }

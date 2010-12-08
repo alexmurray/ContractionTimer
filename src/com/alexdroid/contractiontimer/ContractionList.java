@@ -8,28 +8,21 @@ import java.util.ArrayList;
 
 public class ContractionList extends ListActivity {
 	private static final String TAG = "ContractionList";
-	private ContractionStore mStore;
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
 		Log.v(TAG, "onResume()");
-		mStore = new ContractionStore(this);
+		ContractionStore store = new ContractionStore(this);
 
-		ArrayList<Contraction> contractions = mStore.getAllContractions();
+		/* create an array adapter to adapt from the contractions list to the
+		 * list view */
 		ArrayAdapter adapter = new ArrayAdapter(this, R.layout.contraction_list_item,
-				contractions);
+				store.getAllContractions());
+		/* close store since are done with it now */
+		store.close();
 		setListAdapter(adapter);
-	}
-
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-
-		Log.v(TAG, "onPause()");
-		mStore.close();
 	}
 }
 	
