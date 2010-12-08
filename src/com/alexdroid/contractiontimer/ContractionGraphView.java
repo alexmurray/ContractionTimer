@@ -36,7 +36,6 @@ public class ContractionGraphView extends View {
 		int h = getMeasuredHeight();
 		Log.v(TAG, "onMeasure: w = " + w + " h = " + h);
 		setMeasuredDimension(w, h);
-		mDrawable.setBounds(0, 0, w, h);
 	}
 
 	@Override
@@ -44,8 +43,8 @@ public class ContractionGraphView extends View {
 		if (mContractions == null) {
 			return;
 		}
-		int w = getMeasuredWidth();
-		int h = getMeasuredHeight();
+		int w = getWidth();
+		int h = getHeight();
 		Log.v(TAG, "onDraw: w = " + w + " h = " + h);
 
 		float w_scale = (float)w / (float)(mMaxMillis - mMinMillis);
@@ -66,6 +65,7 @@ public class ContractionGraphView extends View {
 			path.close();
 		}
 
+		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.setShape(new PathShape(path, w, h));
 		mDrawable.draw(canvas);
 	}
