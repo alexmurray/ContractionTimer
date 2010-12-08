@@ -71,7 +71,7 @@ public class ContractionGraphView extends View {
 	}
 
 	public void setContractions(ArrayList<Contraction> contractions) {
-		this.mContractions = contractions;
+		mContractions = contractions;
 
 		mMinMillis = Long.MAX_VALUE;
 		mMaxMillis = 0;
@@ -92,7 +92,7 @@ public class ContractionGraphView extends View {
 		}
 		Log.v(TAG, "setContractions: mMinMillis = " + mMinMillis + " mMaxMillis = " + mMaxMillis);
 		/* schedule relayout and hence redraw */
-		this.requestLayout();
+		requestLayout();
 	}
 
 	public void setResolution(float resolution) {
