@@ -94,4 +94,13 @@ public class ContractionGraphView extends View {
 		/* schedule relayout and hence redraw */
 		this.requestLayout();
 	}
+
+	public void setResolution(float resolution) {
+		mResolution = resolution;
+		requestLayout();
+	}
+
+	public float getResolution() {
+		return mResolution;
+	}
 }

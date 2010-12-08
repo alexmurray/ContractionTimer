@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<view xmlns:android="http://schemas.android.com/apk/res/android"
-		class="com.alexdroid.contractiontimer.ContractionGraphView"
-		android:id="@+id/contraction_graph_view"
+	<HorizontalScrollView
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"/>
-</HorizontalScrollView>
+		android:layout_height="fill_parent">
+		<view xmlns:android="http://schemas.android.com/apk/res/android"
+			class="com.alexdroid.contractiontimer.ContractionGraphView"
+			android:id="@+id/contraction_graph_view"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"/>
+	</HorizontalScrollView>
+	<ZoomControls
+		android:id="@+id/zoom_controls"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+</RelativeLayout>
