@@ -177,12 +177,12 @@ public class ContractionTimer extends Activity
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		/* set state of delete / view contractions depending on if have any
-		 * available */
+		/* set state of menu options depending on if have any available
+		 * */
 		boolean available = ((mStore.getRecentContractions(0, 1)).size() > 0);
 		menu.findItem(R.id.list_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.graph_contractions_menu_item).setEnabled(available);
-		menu.findItem(R.id.delete_menu_item).setEnabled(available);
+		menu.findItem(R.id.reset_menu_item).setEnabled(available);
 		return true;
 	}
 
@@ -195,7 +195,7 @@ public class ContractionTimer extends Activity
 			case R.id.graph_contractions_menu_item:
 				startActivity(new Intent(this, ContractionGraph.class));
 				return true;
-			case R.id.delete_menu_item:
+			case R.id.reset_menu_item:
 				mStore.deleteAll();
 				updateUI();
 				return true;
