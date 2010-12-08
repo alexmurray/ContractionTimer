@@ -114,7 +114,7 @@ public class ContractionTimer extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.contraction_timer);
 
 		mAverageLength = (TextView)findViewById(R.id.average_length_value);
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);

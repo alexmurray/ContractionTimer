@@ -10,7 +10,7 @@ public class ContractionGraph extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.contractiongraph);
+		setContentView(R.layout.contraction_graph);
 
 		mGraphView = (ContractionGraphView)findViewById(R.id.contraction_graph_view);
 	}
