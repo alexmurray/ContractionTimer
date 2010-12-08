@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Chronometer;
-import android.widget.Button;
+import android.widget.ToggleButton;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +20,7 @@ public class ContractionTimer extends Activity
 	private static final String TAG = "ContractionTimer";
 
 	private Chronometer mTimer;
-	private Button mButton;
+	private ToggleButton mButton;
 	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod;
 	private ContractionStore mStore;
 
@@ -96,16 +96,16 @@ public class ContractionTimer extends Activity
 		if (current != null) {
 			/* set time based on start time of current contraction
 			*/
+			mButton.setChecked(true);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
 					(java.lang.System.currentTimeMillis() -
 					 current.getStartMillis()));
 			mTimer.start();
-			mButton.setText(R.string.stop_text);
 		} else {
+			mButton.setChecked(false);
 			mTimer.stop();
 			/* clear mTimer display back to zero */
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime());
-			mButton.setText(R.string.start_text);
 		}
 	}
 
@@ -121,7 +121,7 @@ public class ContractionTimer extends Activity
 		mAveragePeriod = (TextView)findViewById(R.id.average_period_value);
 		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
 		mTimer = (Chronometer)findViewById(R.id.timer);
-		mButton = (Button)findViewById(R.id.button);
+		mButton = (ToggleButton)findViewById(R.id.button);
 
 		/* register listener for click events */
 		mButton.setOnClickListener(new View.OnClickListener() {

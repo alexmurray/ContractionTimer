@@ -114,7 +114,9 @@
 			android:layout_gravity="center_horizontal" 
 			android:layout_alignParentBottom="true"
 			android:layout_marginBottom="5dp"
-			android:textSize="20sp"/>
+			android:textSize="20sp"
+			android:textOff="@string/start_text"
+			android:textOn="@string/stop_text"/>
 	</LinearLayout>
 </LinearLayout>
 
