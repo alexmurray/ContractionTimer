@@ -171,7 +171,7 @@ public class ContractionTimer extends Activity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.contractiontimer, menu);
+		getMenuInflater().inflate(R.menu.contraction_timer, menu);
 		return true;
 	}
 
