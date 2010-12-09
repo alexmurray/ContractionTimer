@@ -1,6 +1,7 @@
 package com.alexdroid.contractiontimer;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
 import android.graphics.Path;
@@ -28,7 +29,12 @@ public class ContractionGraphView extends View {
 	public ContractionGraphView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mDrawable = new ShapeDrawable();
-		mDrawable.getPaint().setColor(0xff74AC23);
+
+		/* get and set our custom parameters */
+		TypedArray array = context.obtainStyledAttributes(attrs,
+				R.styleable.ContractionGraphView);
+		mDrawable.getPaint().setColor(array.getColor(R.styleable.ContractionGraphView_graphColor, 0xff74AC23));
+		array.recycle();
 	}
 
 	@Override
