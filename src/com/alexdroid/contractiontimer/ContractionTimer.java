@@ -18,6 +18,7 @@ import java.util.Iterator;
 public class ContractionTimer extends Activity
 {
 	private static final String TAG = "ContractionTimer";
+	private static final int N_AVERAGE = 5;
 
 	private Chronometer mTimer;
 	private ToggleButton mButton;
@@ -61,10 +62,9 @@ public class ContractionTimer extends Activity
 				android.text.format.DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
 				null);
 
-		/* 1 hour is 60 * 60 * 1000 = 3600000 milliseconds */
-		long recent = 3600000;
-		contractions = mStore.getRecentContractions(java.lang.System.currentTimeMillis() - recent, -1);
-		Log.v(TAG, "Calculating averages of contractions which occurred in the last " + recent / 1000 + " seconds: " + contractions.toString());
+		/* calculate average of the N_AVERAGE most recent contractions */
+		contractions = mStore.getRecentContractions(0, N_AVERAGE);
+		Log.v(TAG, "Calculating averages of " + N_AVERAGE + " most recent contractions " + contractions.toString());
 		Contraction prev = null;
 		for (Contraction c : contractions) {
 			if (c != current) {
