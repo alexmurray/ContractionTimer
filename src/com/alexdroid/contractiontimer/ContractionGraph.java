@@ -51,7 +51,8 @@ public class ContractionGraph extends Activity {
 						mControls.hide();
 					}
 				}.start();
-				return true;
+				/* let other handlers see this event */
+				return false;
 			}
 		});
 

@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class ContractionGraphView extends View {
 	private static final int mMinWidth = 240;
 	private static final double mMaxResolution = 0.05;
 
+	private GestureDetector mDetector;
 	private ShapeDrawable mDrawable;
 	private ArrayList<Contraction> mContractions;
 	private long mMaxLengthMillis;
@@ -29,6 +31,8 @@ public class ContractionGraphView extends View {
 	public ContractionGraphView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mDrawable = new ShapeDrawable();
+
+		mDetector = GestureDetector.newInstance(context, new GestureCallback());
 
 		/* get and set our custom parameters */
 		TypedArray array = context.obtainStyledAttributes(attrs,
@@ -68,7 +72,6 @@ public class ContractionGraphView extends View {
 		}
 		int w = getWidth();
 		int h = getHeight();
-		Log.v(TAG, "onDraw: w = " + w + " h = " + h);
 
 		float w_scale = (float)w / (float)(mMaxMillis - mMinMillis);
 		float h_scale = (float)h / (float)mMaxLengthMillis;
@@ -80,7 +83,6 @@ public class ContractionGraphView extends View {
 			float length = (contraction.getLengthMillis() * w_scale);
 			float height = contraction.getLengthMillis() * h_scale;
 
-			Log.v(TAG, "contraction " + contraction + " start: " + start + " length: " + length + " height: " + height);
 			path.moveTo(start, (float)h);
 			path.cubicTo(start + (length / 3),  height / 2,
 					start + (2 * length / 3), height / 2,
@@ -91,6 +93,14 @@ public class ContractionGraphView extends View {
 		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.setShape(new PathShape(path, w, h));
 		mDrawable.draw(canvas);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent ev) {
+		if (mDetector != null) {
+			mDetector.onTouchEvent(ev);
+		}
+		return true;
 	}
 
 	public void setContractions(ArrayList<Contraction> contractions) {
@@ -136,5 +146,11 @@ public class ContractionGraphView extends View {
 
 	public boolean getCanZoomOut() {
 		return mCanZoomOut;
+	}
+
+	private class GestureCallback implements GestureDetector.OnGestureListener {
+		public void onScale(float scaleFactor) {
+			zoom(scaleFactor);
+		}
 	}
 }
