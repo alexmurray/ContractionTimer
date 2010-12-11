@@ -85,11 +85,11 @@ public class ContractionStore {
 	}
 
 	/**
-	 * Returns an ArrayList of n contractions, which started after start sorted
+	 * Returns an ArrayList of the n most recent contractions sorted
 	 * from newest to oldest - if n is less than or equal to zero returns all
 	 */
-	public ArrayList<Contraction> getRecentContractions(long start, int n) {
-		return getContractions(START_MILLIS + " >= " + start, null, null, null, START_MILLIS + " DESC", n > 0 ? Integer.toString(n) : null);
+	public ArrayList<Contraction> getRecentContractions(int n) {
+		return getContractions(null, null, null, null, START_MILLIS + " DESC", n > 0 ? Integer.toString(n) : null);
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class ContractionTimer extends Activity
 		Contraction previous = null;
 
 		/* get the two most recent contractions */
-		ArrayList<Contraction> contractions = mStore.getRecentContractions(0, 2);
+		ArrayList<Contraction> contractions = mStore.getRecentContractions(2);
 		if (contractions.size() > 0) {
 			Contraction contraction = contractions.get(0);
 			if (contraction.getLengthMillis() == 0) {
@@ -63,7 +63,7 @@ public class ContractionTimer extends Activity
 				null);
 
 		/* calculate average of the N_AVERAGE most recent contractions */
-		contractions = mStore.getRecentContractions(0, N_AVERAGE);
+		contractions = mStore.getRecentContractions(N_AVERAGE);
 		Log.v(TAG, "Calculating averages of " + N_AVERAGE + " most recent contractions " + contractions.toString());
 		Contraction prev = null;
 		for (Contraction c : contractions) {
@@ -127,7 +127,7 @@ public class ContractionTimer extends Activity
 		mButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				/* see if we are in the middle of a contraction */
-				ArrayList<Contraction> contractions = mStore.getRecentContractions(0, 1);
+				ArrayList<Contraction> contractions = mStore.getRecentContractions(1);
 				Contraction contraction = contractions.size() > 0 ? contractions.get(0) : null;
 				if (contraction == null ||
 					contraction.getLengthMillis() > 0) {
@@ -179,7 +179,7 @@ public class ContractionTimer extends Activity
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		/* set state of menu options depending on if have any available
 		 * */
-		boolean available = ((mStore.getRecentContractions(0, 1)).size() > 0);
+		boolean available = ((mStore.getRecentContractions(1)).size() > 0);
 		menu.findItem(R.id.list_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.graph_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.reset_menu_item).setEnabled(available);
