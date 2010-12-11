@@ -1,5 +1,8 @@
 package com.alexdroid.contractiontimer;
 
+import android.text.format.DateUtils;
+import java.text.DateFormat;
+
 public class Contraction {
 	private long mId;
 	private long mStartMillis;
@@ -29,10 +32,9 @@ public class Contraction {
 
 	public String toString()
 	{
-		return android.text.format.DateUtils.getRelativeTimeSpanString(mStartMillis,
-				java.lang.System.currentTimeMillis(), 0) + ": " +
+		return "[" + DateFormat.getDateTimeInstance().format(mStartMillis) + "]: " + 
 
-			android.text.format.DateUtils.formatElapsedTime(mLengthMillis / 1000);
+			DateUtils.formatElapsedTime(mLengthMillis / 1000);
 	}
 }
 
