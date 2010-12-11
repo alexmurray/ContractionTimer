@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public class ContractionGraphView extends View {
 	private static final String TAG = "ContractionGraphView";
-	private static final int mMinWidth = 240;
-	private static final double mMaxResolution = 0.05;
+	private static final int MIN_WIDTH = 240;
+	private static final double MAX_RESOLUTION = 0.05;
 
 	private GestureDetector mDetector;
 	private ShapeDrawable mDrawable;
@@ -24,8 +24,8 @@ public class ContractionGraphView extends View {
 	private long mMinMillis;
 	private long mMaxMillis;
 	/* dp per millisecond */
-	private double mResolution = mMaxResolution / 5.0;
-	private boolean mCanZoomIn = mResolution < mMaxResolution;
+	private double mResolution = MAX_RESOLUTION / 5.0;
+	private boolean mCanZoomIn = mResolution < MAX_RESOLUTION;
 	private boolean mCanZoomOut = false;
 
 	public ContractionGraphView(Context context, AttributeSet attrs) {
@@ -50,10 +50,10 @@ public class ContractionGraphView extends View {
 		 * then respect it by recalculating mResolution */
 		if (getMeasuredWidth() == 0) {
 			/* set our width depending on size - ensure we aren't smaller than
-			 * mMinWidth */
-			int w = Math.max(mMinWidth, (int)((mMaxMillis - mMinMillis) * mResolution));
-			mCanZoomOut = (w > mMinWidth);
-			mCanZoomIn = (mResolution < mMaxResolution);
+			 * MIN_WIDTH */
+			int w = Math.max(MIN_WIDTH, (int)((mMaxMillis - mMinMillis) * mResolution));
+			mCanZoomOut = (w > MIN_WIDTH);
+			mCanZoomIn = (mResolution < MAX_RESOLUTION);
 			/* use super's value of measured height */
 			int h = getMeasuredHeight();
 			setMeasuredDimension(w, h);
@@ -123,8 +123,8 @@ public class ContractionGraphView extends View {
 				mMaxMillis = maxMillis;
 			}
 		}
-		/* update resolution to ensure we aren't smaller than mMinWidth */
-		mResolution = Math.max(mResolution, (double)mMinWidth / (double)(mMaxMillis - mMinMillis));
+		/* update resolution to ensure we aren't smaller than MIN_WIDTH */
+		mResolution = Math.max(mResolution, (double)MIN_WIDTH / (double)(mMaxMillis - mMinMillis));
 		Log.v(TAG, "setContractions: mMinMillis = " + mMinMillis + " mMaxMillis = " + mMaxMillis);
 		/* schedule relayout and hence redraw */
 		requestLayout();
@@ -132,10 +132,10 @@ public class ContractionGraphView extends View {
 
 	public void zoom(double scale) {
 		if (mCanZoomIn && scale > 1.0 || mCanZoomOut && scale < 1.0) {
-			double minResolution = (double)mMinWidth / (double)(mMaxMillis - mMinMillis);
+			double minResolution = (double)MIN_WIDTH / (double)(mMaxMillis - mMinMillis);
 			mResolution = Math.max(mResolution * scale, minResolution);
 			mCanZoomOut = (mResolution > minResolution);
-			mCanZoomIn = (mResolution < mMaxResolution);
+			mCanZoomIn = (mResolution < MAX_RESOLUTION);
 			requestLayout();
 		}
 	}
