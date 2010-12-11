@@ -13,7 +13,7 @@
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
 				android:textStyle="bold" 
-				android:textSize="15sp"
+				android:textSize="18sp"
 				android:text="@string/average_heading_label_text"/>
 		</TableRow>
 		<TableRow>
@@ -22,26 +22,28 @@
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
 				android:text="@string/length_label_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
 			<TextView  
 				android:id="@+id/average_length_value" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
 				android:hint="@string/none_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
-		</TableRow>
-		<TableRow>
 			<TextView  
 				android:id="@+id/average_period_label" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
 				android:text="@string/period_label_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
 			<TextView  
 				android:id="@+id/average_period_value" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
 				android:hint="@string/none_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
 		</TableRow>
 		<TableRow>
@@ -49,9 +51,8 @@
 				android:id="@+id/previous_heading_label" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
-				android:layout_below="@id/average_period_label"
 				android:textStyle="bold" 
-				android:textSize="15sp"
+				android:textSize="18sp"
 				android:text="@string/previous_heading_label_text"/>
 		</TableRow>
 		<TableRow>
@@ -59,33 +60,29 @@
 				android:id="@+id/previous_length_label" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
-				android:layout_below="@id/previous_heading_label"
 				android:text="@string/length_label_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
 			<TextView  
 				android:id="@+id/previous_length_value" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
-				android:layout_alignTop="@id/previous_length_label"
-				android:layout_toRightOf="@id/previous_length_label"
+				android:textSize="15sp"
 				android:hint="@string/none_text"
 				android:layout_marginLeft="5dp"/>
-		</TableRow>
-		<TableRow>
 			<TextView  
 				android:id="@+id/previous_period_label" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
-				android:layout_below="@id/previous_length_label"
 				android:text="@string/period_label_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
 			<TextView  
 				android:id="@+id/previous_period_value" 
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
-				android:layout_alignTop="@id/previous_period_label"
-				android:layout_toRightOf="@id/previous_period_label"
 				android:hint="@string/none_text"
+				android:textSize="15sp"
 				android:layout_marginLeft="5dp"/>
 		</TableRow>
 	</TableLayout>
@@ -114,7 +111,7 @@
 			android:layout_gravity="center_horizontal" 
 			android:layout_alignParentBottom="true"
 			android:layout_marginBottom="5dp"
-			android:textSize="20sp"
+			android:textSize="25sp"
 			android:textOff="@string/start_text"
 			android:textOn="@string/stop_text"/>
 	</LinearLayout>
