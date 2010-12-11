@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="contraction_timer_name">Contraction Timer</string>
+    <string name="early_phase_text">Early Phase</string>
+    <string name="active_phase_text">Active Phase</string>
+    <string name="transitional_phase_text">Transitional Phase</string>
     <string name="average_heading_label_text">Average</string>
     <string name="previous_heading_label_text">Previous</string>
     <string name="length_label_text">Length:</string>
