@@ -38,6 +38,10 @@ public class ContractionGraphView extends View {
 		TypedArray array = context.obtainStyledAttributes(attrs,
 				R.styleable.ContractionGraphView);
 		mDrawable.getPaint().setColor(array.getColor(R.styleable.ContractionGraphView_graphColor, 0xff74AC23));
+		int textSize = array.getDimensionPixelOffset(R.styleable.ContractionGraphView_textSize, 0);
+		if (textSize > 0) {
+			mDrawable.getPaint().setTextSize(textSize);
+		}
 		array.recycle();
 	}
 
@@ -72,12 +76,22 @@ public class ContractionGraphView extends View {
 		}
 		int w = getWidth();
 		int h = getHeight();
+		int fontHeight = mDrawable.getPaint().getFontMetricsInt(null);
+
+		/* remove font spacing from height */
+		h -= fontHeight;
+
+		canvas.drawText("Test", 0, h, mDrawable.getPaint());
+
+		/* now shift up again */
+		h -= fontHeight;
 
 		float w_scale = (float)w / (float)(mMaxMillis - mMinMillis);
 		float h_scale = (float)h / (float)mMaxLengthMillis;
 
-		/* draw contractions into path */
 		Path path = new Path();
+
+		/* draw contractions into path */
 		for (Contraction contraction : mContractions) {
 			float start = (contraction.getStartMillis() - mMinMillis) * w_scale;
 			float length = (contraction.getLengthMillis() * w_scale);
