@@ -1,7 +1,10 @@
 package com.alexdroid.contractiontimer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Chronometer;
@@ -187,6 +190,39 @@ public class ContractionTimer extends Activity
 	}
 
 	@Override
+	protected Dialog onCreateDialog(int id) {
+		return this.onCreateDialog(id, null);
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id, Bundle args) {
+		Dialog dialog = null;
+		switch (id) {
+			case 0:
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(R.string.confirm_reset_text)
+					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							mStore.deleteAll();
+							updateUI();
+						}
+					})
+				.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				dialog = builder.create();
+				break;
+
+			default:
+				Log.e(TAG, "Unknown dialog id " + id);
+		}
+		Log.v(TAG, "Created dialog for id " + id);
+		return dialog;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.list_contractions_menu_item:
@@ -196,8 +232,7 @@ public class ContractionTimer extends Activity
 				startActivity(new Intent(this, ContractionGraph.class));
 				return true;
 			case R.id.reset_menu_item:
-				mStore.deleteAll();
-				updateUI();
+				showDialog(0);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);

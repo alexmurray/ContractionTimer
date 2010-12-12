@@ -14,6 +14,7 @@
     <string name="list_contractions_menu_item_text">List Contractions</string>
     <string name="graph_contractions_menu_item_text">Graph Contractions</string>
     <string name="reset_menu_item_text">Reset</string>
+    <string name="confirm_reset_text">Delete all previously recorded contractions data?</string>
     <string name="contraction_list_name">Contractions</string>
     <string name="contraction_graph_name">Contractions</string>
 </resources>
