@@ -39,8 +39,43 @@ public class ContractionTimer extends Activity
 		Contraction current = null;
 		Contraction previous = null;
 
+		/* calculate next expected contraction using least squares method - we
+		 * calculate from oldest to newest */
+		ArrayList<Contraction> contractions = mStore.getAllContractions();
+		/* only do if have at least 3 data points */
+		if (contractions.size() > 2) {
+			long n = 0;
+			long prevStartMillis = 0;
+			long sumX = 0;
+			long sumY = 0;
+			long sumXX = 0;
+			long sumXY = 0;
+
+			for (Contraction contraction : contractions) {
+				long startMillis = contraction.getStartMillis();
+				if (prevStartMillis > 0) {
+					long y = startMillis - prevStartMillis;
+
+					sumX += n;
+					sumXX += n * n;
+					sumY += y;
+					sumXY += n * y;
+					n++;
+				}
+				prevStartMillis = startMillis;
+			}
+			long m = ((n * sumXY) - (sumX * sumY)) /
+				((n * sumXX) - (sumX * sumX));
+			long c = (sumY - (m * sumX)) / n;
+			long nextPeriodMillis = (m * n) + c;
+			/* TODO: use a countdown timer to update a TextView which shows how
+			 * long to go till next estimated contraction - can set the field
+			 * red if overdue */
+			Log.v(TAG, "Estimated next period length: " + nextPeriodMillis);
+		}
+
 		/* get the two most recent contractions */
-		ArrayList<Contraction> contractions = mStore.getRecentContractions(2);
+		contractions = mStore.getRecentContractions(2);
 		if (contractions.size() > 0) {
 			Contraction contraction = contractions.get(0);
 			if (contraction.getLengthMillis() == 0) {
