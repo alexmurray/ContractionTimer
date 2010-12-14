@@ -66,7 +66,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:layout_weight="0.5"
-		android:gravity="center"/>
+		android:gravity="bottom|center_horizontal"/>
 	<Chronometer
 		android:id="@+id/timer"
 		android:layout_width="wrap_content"
