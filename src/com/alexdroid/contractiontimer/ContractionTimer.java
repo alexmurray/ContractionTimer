@@ -28,7 +28,7 @@ public class ContractionTimer extends Activity
 	private CountDownTimer mCountDownTimer;
 	private Chronometer mTimer;
 	private ToggleButton mButton;
-	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod, mCountdown;
+	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod, mTimerFunction;
 	private ContractionStore mStore;
 
 	private void updateUI()
@@ -59,72 +59,6 @@ public class ContractionTimer extends Activity
 			if (contractions.size() > 1) {
 				previousPeriodMillis = contractions.get(0).getStartMillis() - contractions.get(1).getStartMillis();
 			}
-		}
-
-		/* calculate next expected contraction using least squares method - we
-		 * calculate from oldest to newest */
-		contractions = mStore.getAllContractions();
-		/* only do if have at least 3 data points */
-		if (contractions.size() > 2) {
-			long n = 0;
-			long prevStartMillis = 0;
-			long sumX = 0;
-			long sumY = 0;
-			long sumXX = 0;
-			long sumXY = 0;
-
-			for (Contraction contraction : contractions) {
-				long startMillis = contraction.getStartMillis();
-				if (prevStartMillis > 0) {
-					long y = startMillis - prevStartMillis;
-
-					sumX += n;
-					sumXX += n * n;
-					sumY += y;
-					sumXY += n * y;
-					n++;
-				}
-				prevStartMillis = startMillis;
-			}
-			long m = ((n * sumXY) - (sumX * sumY)) /
-				((n * sumXX) - (sumX * sumX));
-			long c = (sumY - (m * sumX)) / n;
-			long nextPeriodMillis = (m * n) + c;
-			/* TODO: use a countdown timer to update a TextView which shows how
-			 * long to go till next estimated contraction - can set the field
-			 * red if overdue */
-			Log.v(TAG, "Estimated next period length: " + nextPeriodMillis);
-			if (mCountDownTimer != null) {
-				mCountDownTimer.cancel();
-				mCountDownTimer = null;
-			}
-			/* only show a new timer if not in the middle of a contraction */
-			if (current == null) {
-				/* start a timer with the amount of time till next contraction */
-				long nextContractionMillis = nextPeriodMillis - 
-					(java.lang.System.currentTimeMillis() - prevStartMillis);
-				if (nextContractionMillis > 0) {
-					mCountdown.setText(DateUtils.formatElapsedTime(nextContractionMillis / 1000));
-					mCountDownTimer = new CountDownTimer(nextContractionMillis, 1000) {
-						public void onTick(long millisUntilFinished) {
-							mCountdown.setText(DateUtils.formatElapsedTime(millisUntilFinished / 1000));
-						}
-						public void onFinish() {
-							mCountdown.setText(R.string.overdue_text);
-						}
-					}.start();
-				} else {
-					mCountdown.setText(R.string.overdue_text);
-				}
-			} else {
-				mCountdown.setText(null);
-			}
-		} else {
-			if (mCountDownTimer != null) {
-				mCountDownTimer.cancel();
-				mCountDownTimer = null;
-			}
-			mCountdown.setText(null);
 		}
 
 		Log.v(TAG, "Updating UI: current = " + current + " previous = " + previous);
@@ -167,19 +101,82 @@ public class ContractionTimer extends Activity
 				DateUtils.formatElapsedTime(averagePeriodMillis / 1000) :
 				null);
 
+		/* stop any countdown timer */
+		if (mCountDownTimer != null) {
+			mCountDownTimer.cancel();
+			mCountDownTimer = null;
+		}
+
 		if (current != null) {
-			/* set time based on start time of current contraction
-			*/
+			/* set time based on start time of current contraction */
+			mTimerFunction.setText(R.string.countup_label_text);
 			mButton.setChecked(true);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
 					(java.lang.System.currentTimeMillis() -
 					 current.getStartMillis()));
 			mTimer.start();
 		} else {
+			/* calculate time till next contraction if not currently having one
+			 * using least squares method - we calculate from oldest to newest
+			 * */
+			long nextContractionMillis = 0;
+			contractions = mStore.getAllContractions();
+			/* only do if have at least 3 data points */
+			if (contractions.size() > 2) {
+				long n = 0;
+				long prevStartMillis = 0;
+				long sumX = 0;
+				long sumY = 0;
+				long sumXX = 0;
+				long sumXY = 0;
+
+				for (Contraction contraction : contractions) {
+					long startMillis = contraction.getStartMillis();
+					if (prevStartMillis > 0) {
+						long y = startMillis - prevStartMillis;
+
+						sumX += n;
+						sumXX += n * n;
+						sumY += y;
+						sumXY += n * y;
+						n++;
+					}
+					prevStartMillis = startMillis;
+				}
+				long m = ((n * sumXY) - (sumX * sumY)) /
+					((n * sumXX) - (sumX * sumX));
+				long c = (sumY - (m * sumX)) / n;
+				long nextPeriodMillis = (m * n) + c;
+
+				nextContractionMillis = nextPeriodMillis - 
+					(java.lang.System.currentTimeMillis() - prevStartMillis);
+
+				Log.v(TAG, "Estimated next period length: " + nextPeriodMillis);
+			}
+			/* not having a contraction so set button to unchecked and stop any
+			 * timer */
 			mButton.setChecked(false);
 			mTimer.stop();
-			/* clear mTimer display back to zero */
-			mTimer.setBase(android.os.SystemClock.elapsedRealtime());
+			/* use mTimer to display the amount of time till next contraction */
+			if (nextContractionMillis > 0) {
+				mTimerFunction.setText(R.string.countdown_label_text);
+				mTimer.setText(DateUtils.formatElapsedTime(nextContractionMillis / 1000));
+				/* create a countdown timer to update the value of the timer
+				 * for us to show how long till next contraction */
+				mCountDownTimer = new CountDownTimer(nextContractionMillis, 1000) {
+					public void onTick(long millisUntilFinished) {
+						mTimer.setText(DateUtils.formatElapsedTime(millisUntilFinished / 1000));
+					}
+					public void onFinish() {
+						/* use default hint when nothing to display */
+						mTimer.setText(null);
+					}
+				}.start();
+			} else if (nextContractionMillis <= 0) {
+				/* use default hint when nothing to display */
+				mTimerFunction.setText(null);
+				mTimer.setText(null);
+			}
 		}
 	}
 
@@ -194,7 +191,7 @@ public class ContractionTimer extends Activity
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
 		mAveragePeriod = (TextView)findViewById(R.id.average_period_value);
 		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
-		mCountdown = (TextView)findViewById(R.id.countdown_value);
+		mTimerFunction = (TextView)findViewById(R.id.timer_function_label);
 		mTimer = (Chronometer)findViewById(R.id.timer);
 		mButton = (ToggleButton)findViewById(R.id.button);
 
