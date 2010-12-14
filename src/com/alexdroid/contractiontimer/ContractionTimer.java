@@ -75,7 +75,7 @@ public class ContractionTimer extends Activity
 		Log.v(TAG, "Calculating averages of " + N_AVERAGE + " most recent contractions " + contractions.toString());
 		Contraction prev = null;
 		for (Contraction c : contractions) {
-			if (c != current) {
+			if (current == null || c.getID() != current.getID()) {
 				averageLengthMillis += c.getLengthMillis();
 				numContractions++;
 			}
