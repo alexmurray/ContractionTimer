@@ -66,7 +66,8 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:layout_weight="0.5"
-		android:gravity="bottom|center_horizontal"/>
+		android:gravity="bottom|center_horizontal"
+		android:hint="@string/countdown_label_text"/>
 	<Chronometer
 		android:id="@+id/timer"
 		android:layout_width="wrap_content"

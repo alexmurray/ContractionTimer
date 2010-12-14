@@ -169,6 +169,7 @@ public class ContractionTimer extends Activity
 					}
 					public void onFinish() {
 						/* use default hint when nothing to display */
+						mTimerFunction.setText(null);
 						mTimer.setText(null);
 					}
 				}.start();
