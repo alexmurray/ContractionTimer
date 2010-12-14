@@ -9,6 +9,9 @@
     <string name="length_label_text">Length:</string>
     <string name="period_label_text">Period:</string>
     <string name="none_text">None</string>
+    <string name="countdown_label_text">Time until next contraction:</string>
+    <string name="unknown_text">Unknown</string>
+    <string name="overdue_text">Overdue</string>
     <string name="start_text">Start</string>
     <string name="stop_text">Stop</string>
     <string name="list_contractions_menu_item_text">List Contractions</string>

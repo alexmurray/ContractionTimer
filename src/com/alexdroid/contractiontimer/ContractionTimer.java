@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.format.DateUtils;
 import android.widget.TextView;
 import android.widget.Chronometer;
 import android.widget.ToggleButton;
@@ -23,9 +25,10 @@ public class ContractionTimer extends Activity
 	private static final String TAG = "ContractionTimer";
 	private static final int N_AVERAGE = 5;
 
+	private CountDownTimer mCountDownTimer;
 	private Chronometer mTimer;
 	private ToggleButton mButton;
-	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod;
+	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod, mCountdown;
 	private ContractionStore mStore;
 
 	private void updateUI()
@@ -39,9 +42,28 @@ public class ContractionTimer extends Activity
 		Contraction current = null;
 		Contraction previous = null;
 
+		/* get the two most recent contractions to find out if have a current
+		 * and previous contraction */
+		ArrayList<Contraction> contractions = mStore.getRecentContractions(2);
+		if (contractions.size() > 0) {
+			Contraction contraction = contractions.get(0);
+			if (contraction.getLengthMillis() == 0) {
+				/* we have a current contraction */
+				current = contraction;
+				if (contractions.size() > 1) {
+					previous = contractions.get(1);
+				}
+			} else {
+				previous = contraction;
+			}
+			if (contractions.size() > 1) {
+				previousPeriodMillis = contractions.get(0).getStartMillis() - contractions.get(1).getStartMillis();
+			}
+		}
+
 		/* calculate next expected contraction using least squares method - we
 		 * calculate from oldest to newest */
-		ArrayList<Contraction> contractions = mStore.getAllContractions();
+		contractions = mStore.getAllContractions();
 		/* only do if have at least 3 data points */
 		if (contractions.size() > 2) {
 			long n = 0;
@@ -72,32 +94,46 @@ public class ContractionTimer extends Activity
 			 * long to go till next estimated contraction - can set the field
 			 * red if overdue */
 			Log.v(TAG, "Estimated next period length: " + nextPeriodMillis);
-		}
-
-		/* get the two most recent contractions */
-		contractions = mStore.getRecentContractions(2);
-		if (contractions.size() > 0) {
-			Contraction contraction = contractions.get(0);
-			if (contraction.getLengthMillis() == 0) {
-				/* we have a current contraction */
-				current = contraction;
-				if (contractions.size() > 1) {
-					previous = contractions.get(1);
+			if (mCountDownTimer != null) {
+				mCountDownTimer.cancel();
+				mCountDownTimer = null;
+			}
+			/* only show a new timer if not in the middle of a contraction */
+			if (current == null) {
+				/* start a timer with the amount of time till next contraction */
+				long nextContractionMillis = nextPeriodMillis - 
+					(java.lang.System.currentTimeMillis() - prevStartMillis);
+				if (nextContractionMillis > 0) {
+					mCountdown.setText(DateUtils.formatElapsedTime(nextContractionMillis / 1000));
+					mCountDownTimer = new CountDownTimer(nextContractionMillis, 1000) {
+						public void onTick(long millisUntilFinished) {
+							mCountdown.setText(DateUtils.formatElapsedTime(millisUntilFinished / 1000));
+						}
+						public void onFinish() {
+							mCountdown.setText(R.string.overdue_text);
+						}
+					}.start();
+				} else {
+					mCountdown.setText(R.string.overdue_text);
 				}
 			} else {
-				previous = contraction;
+				mCountdown.setText(null);
 			}
-			if (contractions.size() > 1) {
-				previousPeriodMillis = contractions.get(0).getStartMillis() - contractions.get(1).getStartMillis();
+		} else {
+			if (mCountDownTimer != null) {
+				mCountDownTimer.cancel();
+				mCountDownTimer = null;
 			}
+			mCountdown.setText(null);
 		}
+
 		Log.v(TAG, "Updating UI: current = " + current + " previous = " + previous);
 		mPreviousLength.setText(previous != null ?
-				android.text.format.DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000) :
+				DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000) :
 				null);
 		Log.v(TAG, "previousPeriodMillis = " + previousPeriodMillis);
 		mPreviousPeriod.setText(previousPeriodMillis > 0 ?
-				android.text.format.DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
+				DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
 				null);
 
 		/* calculate average of the N_AVERAGE most recent contractions */
@@ -125,10 +161,10 @@ public class ContractionTimer extends Activity
 		}
 		Log.v(TAG, "Calculated averageLengthMillis = " + averageLengthMillis + " averagePeriodMillis = " + averagePeriodMillis);
 		mAverageLength.setText(averageLengthMillis > 0 ?
-				android.text.format.DateUtils.formatElapsedTime(averageLengthMillis / 1000) :
+				DateUtils.formatElapsedTime(averageLengthMillis / 1000) :
 				null);
 		mAveragePeriod.setText(averagePeriodMillis > 0 ?
-				android.text.format.DateUtils.formatElapsedTime(averagePeriodMillis / 1000) :
+				DateUtils.formatElapsedTime(averagePeriodMillis / 1000) :
 				null);
 
 		if (current != null) {
@@ -158,6 +194,7 @@ public class ContractionTimer extends Activity
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
 		mAveragePeriod = (TextView)findViewById(R.id.average_period_value);
 		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
+		mCountdown = (TextView)findViewById(R.id.countdown_value);
 		mTimer = (Chronometer)findViewById(R.id.timer);
 		mButton = (ToggleButton)findViewById(R.id.button);
 
