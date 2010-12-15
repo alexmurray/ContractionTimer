@@ -45,7 +45,7 @@ public class ContractionStore {
 		return db.insert(CONTRACTIONS_TABLE_NAME, null, values);
 	}
 
-	public boolean setlength(long id, long length) {
+	public boolean setLength(long id, long length) {
 		ContentValues values = new ContentValues();
 
 		values.put(LENGTH_MILLIS, length);

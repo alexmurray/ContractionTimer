@@ -24,11 +24,13 @@ public class ContractionTimer extends Activity
 {
 	private static final String TAG = "ContractionTimer";
 	private static final int N_AVERAGE = 5;
+	private static final long MAX_ACTIVE_PHASE_PERIOD = 4000 * 60;
+	private static final long MAX_TRANSITIONAL_PHASE_PERIOD = 2000 * 60;
 
 	private CountDownTimer mCountDownTimer;
 	private Chronometer mTimer;
 	private ToggleButton mButton;
-	private TextView mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod, mTimerFunction;
+	private TextView mPhase, mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod, mTimerFunction;
 	private ContractionStore mStore;
 
 	private void updateUI()
@@ -100,6 +102,17 @@ public class ContractionTimer extends Activity
 		mAveragePeriod.setText(averagePeriodMillis > 0 ?
 				DateUtils.formatElapsedTime(averagePeriodMillis / 1000) :
 				null);
+		int phaseTextID = (averagePeriodMillis > MAX_ACTIVE_PHASE_PERIOD ?
+				R.string.latent_phase_text :
+				averagePeriodMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
+				R.string.active_phase_text :
+				averagePeriodMillis > 0 ? R.string.transitional_phase_text :
+				-1);
+		if (phaseTextID > 0) {
+			mPhase.setText(phaseTextID);
+		} else {
+			mPhase.setText(null);
+		}
 
 		/* stop any countdown timer */
 		if (mCountDownTimer != null) {
@@ -188,6 +201,7 @@ public class ContractionTimer extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contraction_timer);
 
+		mPhase = (TextView)findViewById(R.id.phase_label);
 		mAverageLength = (TextView)findViewById(R.id.average_length_value);
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
 		mAveragePeriod = (TextView)findViewById(R.id.average_period_value);
@@ -213,7 +227,7 @@ public class ContractionTimer extends Activity
 				} else {
 					long length = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
 
-					mStore.setlength(contraction.getID(), length);
+					mStore.setLength(contraction.getID(), length);
 					Log.v(TAG, "Set length of contraction " + mStore.getContraction(contraction.getID()));
 				}
 				updateUI();
