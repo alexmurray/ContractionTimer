@@ -32,7 +32,7 @@ public class Contraction {
 
 	public String toString()
 	{
-		return "[" + DateFormat.getDateTimeInstance().format(mStartMillis) + "]: " + 
+		return "[" + DateFormat.getInstance().format(mStartMillis) + "]: " + 
 
 			DateUtils.formatElapsedTime(mLengthMillis / 1000);
 	}
