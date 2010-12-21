@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class ContractionGraphView extends View {
 	private static final String TAG = "ContractionGraphView";
 	private static final int MIN_WIDTH = 240;
+	/* maximum resolution of 0.05 pixels per millisecond or conversely 1 pixel
+	 * per 20 milliseconds */
 	private static final double MAX_RESOLUTION = 0.05;
 
 	private GestureDetector mDetector;
@@ -69,6 +71,29 @@ public class ContractionGraphView extends View {
 		Log.v(TAG, "onMeasure: measuredWidth = " + getWidth() + " measuredHeight = " + getMeasuredHeight() + " mResolution = " + mResolution);
 	}
 
+	private void drawTimeAxisLabels(Canvas canvas, int w, int h) {
+		/* define some static ranges of resolutions to know what scale to use
+		 * */
+		final int SECONDS = 0;
+		final int MINUTES = 1;
+		final int HOURS = 2;
+		final int DAYS = 3;
+		final double RANGES[] = {
+		   	(double)w / 1000.0f,
+			(double)w / (60 * 1000.0f),
+			(double)w / (60 * 60 * 1000.0f),
+			(double)w / (24 * 60 * 60 * 1000.0f),
+		};
+
+		for (int i = 0; i <= DAYS; i++) {
+			if (RANGES[i] > 1.0 || i == DAYS) {
+				canvas.drawText("Resolution: " + mResolution + " < " + 
+						RANGES[i] + " Range: " + i , 0, h, mDrawable.getPaint());
+				break;
+			}
+		}
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		if (mContractions == null) {
@@ -81,7 +106,7 @@ public class ContractionGraphView extends View {
 		/* remove font spacing from height */
 		h -= fontHeight;
 
-		canvas.drawText("Test", 0, h, mDrawable.getPaint());
+		drawTimeAxisLabels(canvas, w, h);
 
 		/* now shift up again */
 		h -= fontHeight;
