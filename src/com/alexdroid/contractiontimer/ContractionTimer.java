@@ -313,7 +313,7 @@ public class ContractionTimer extends Activity
 				startActivity(new Intent(this, ContractionList.class));
 				return true;
 			case R.id.graph_contractions_menu_item:
-				startActivity(new Intent(this, ContractionGraph.class));
+				startActivity(new Intent(this, ContractionGrapher.class));
 				return true;
 			case R.id.reset_menu_item:
 				showDialog(0);

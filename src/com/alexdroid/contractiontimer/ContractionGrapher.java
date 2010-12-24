@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ZoomControls;
 
-public class ContractionGraph extends Activity {
+public class ContractionGrapher extends Activity {
 	private ContractionGraphView mGraphView;
 	private ZoomControls mControls;
 	private CountDownTimer mTimer;
