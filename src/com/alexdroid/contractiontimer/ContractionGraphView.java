@@ -70,8 +70,8 @@ public class ContractionGraphView extends HorizontalScrollView {
 		private static final String TAG = "ContractionGraph";
 
 		private static final int MIN_WIDTH = 240;
-		/* maximum resolution of 0.05 pixels per millisecond or conversely 1 pixel
-		 * per 20 milliseconds */
+		/* maximum resolution of 0.05 pixels per millisecond or conversely 1
+		 * pixel per 20 milliseconds */
 		private static final double MAX_RESOLUTION = 0.05;
 
 		private ShapeDrawable mDrawable;
@@ -121,7 +121,8 @@ public class ContractionGraphView extends HorizontalScrollView {
 			Log.v(TAG, "onMeasure: measuredWidth = " + getWidth() + " measuredHeight = " + getMeasuredHeight() + " mResolution = " + mResolution);
 		}
 
-		private void drawTimeAxisLabels(Canvas canvas, int w, int h) {
+		private void drawTimeAxisLabels(Canvas canvas, int fontHeight,
+				int w, int h) {
 			/* define some time constants to know what scale to use */
 			final int TIME_SCALE_SECONDS = 0;
 			final int TIME_SCALE_MINUTES = 1;
@@ -136,16 +137,33 @@ public class ContractionGraphView extends HorizontalScrollView {
 				24 * 60 * 60 * 1000,
 			};
 
+			Path path = new Path();
+
 			Log.v(TAG, "mResolution: " + mResolution);
 			for (int i = 0; i < NUM_TIME_SCALES; i++) {
 				/* draw ticks for each time scale but only if resolution is
 				 * okay - i.e. if ticks will be more than 20 pixels apart then
 				 * draw */
-				if (mResolution * LENGTHS[i] > 20.0) {
-					Log.v(TAG, "Would draw " + i + " at " + mResolution * LENGTHS[i] + "dp apart");
+				double dp = mResolution * LENGTHS[i];
+				if (dp > 20.0) {
+					Log.v(TAG, "Would draw " + i + " at " + dp + "dp apart");
+					/* round up to next unit */
+					long ms = (mMinMillis + LENGTHS[i]);
+					ms -= (ms % LENGTHS[i]);
+					Log.v(TAG, "mMinMillis rounded to " + i + ": " + ms);
 
+					/* convert ms to dp */
+					double x = (ms - mMinMillis) * mResolution;
+					while (x < w) {
+						path.addRect(
+								(float)x,
+							   	(float)h - ((float)fontHeight / (NUM_TIME_SCALES - i)),
+							   	(float)(x + 1.0), (float)h, Path.Direction.CW);
+						x += mResolution * LENGTHS[i];
+					}
 				}
 			}
+			canvas.drawPath(path, mDrawable.getPaint());
 		}
 
 		@Override
@@ -157,10 +175,7 @@ public class ContractionGraphView extends HorizontalScrollView {
 			int h = getHeight();
 			int fontHeight = mDrawable.getPaint().getFontMetricsInt(null);
 
-			/* remove font spacing from height */
-			h -= fontHeight;
-
-			drawTimeAxisLabels(canvas, w, h);
+			drawTimeAxisLabels(canvas, fontHeight, w, h);
 
 			/* now shift up again */
 			h -= fontHeight;
