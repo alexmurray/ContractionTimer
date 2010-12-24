@@ -99,14 +99,14 @@ public class ContractionGraphView extends HorizontalScrollView {
 
 		@Override
 		protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-			/* use super to handle this but then override with our required width */
+			/* use super to handle this but then override with our required
+			 * width */
 			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
 			/* if super class didn't set a width, then set our own - but if did
 			 * then respect it by recalculating mResolution */
 			if (getMeasuredWidth() == 0) {
-				/* set our width depending on size - ensure we aren't smaller than
-				 * MIN_WIDTH */
+				/* set our width depending on size - ensure we aren't smaller
+				 * than MIN_WIDTH */
 				int w = Math.max(MIN_WIDTH, (int)((mMaxMillis - mMinMillis) * mResolution));
 				mCanZoomOut = (w > MIN_WIDTH);
 				mCanZoomIn = (mResolution < MAX_RESOLUTION);
@@ -122,24 +122,28 @@ public class ContractionGraphView extends HorizontalScrollView {
 		}
 
 		private void drawTimeAxisLabels(Canvas canvas, int w, int h) {
-			/* define some static ranges of resolutions to know what scale to use
-			 * */
-			final int SECONDS = 0;
-			final int MINUTES = 1;
-			final int HOURS = 2;
-			final int DAYS = 3;
-			final double RANGES[] = {
-				(double)w / 1000.0f,
-				(double)w / (60 * 1000.0f),
-				(double)w / (60 * 60 * 1000.0f),
-				(double)w / (24 * 60 * 60 * 1000.0f),
+			/* define some time constants to know what scale to use */
+			final int TIME_SCALE_SECONDS = 0;
+			final int TIME_SCALE_MINUTES = 1;
+			final int TIME_SCALE_HOURS = 2;
+			final int TIME_SCALE_DAYS = 3;
+			final int NUM_TIME_SCALES = 4;
+			/* length of each time unit in milliseconds */
+			final int LENGTHS[] = {
+				1000,
+				60 * 1000,
+				60 * 60 * 1000,
+				24 * 60 * 60 * 1000,
 			};
 
-			for (int i = 0; i <= DAYS; i++) {
-				if (RANGES[i] > 1.0 || i == DAYS) {
-					canvas.drawText("Resolution: " + mResolution + " < " + 
-							RANGES[i] + " Range: " + i , 0, h, mDrawable.getPaint());
-					break;
+			Log.v(TAG, "mResolution: " + mResolution);
+			for (int i = 0; i < NUM_TIME_SCALES; i++) {
+				/* draw ticks for each time scale but only if resolution is
+				 * okay - i.e. if ticks will be more than 20 pixels apart then
+				 * draw */
+				if (mResolution * LENGTHS[i] > 20.0) {
+					Log.v(TAG, "Would draw " + i + " at " + mResolution * LENGTHS[i] + "dp apart");
+
 				}
 			}
 		}
