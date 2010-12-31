@@ -4,8 +4,8 @@
     <string name="latent_phase_text">Latent Phase</string>
     <string name="active_phase_text">Active Phase</string>
     <string name="transitional_phase_text">Transitional Phase</string>
-    <string name="average_heading_label_text">Average</string>
     <string name="previous_heading_label_text">Previous</string>
+    <string name="predicted_heading_label_text">Predicted Next</string>
     <string name="length_label_text">Length:</string>
     <string name="period_label_text">Period:</string>
     <string name="none_text">--:--</string>

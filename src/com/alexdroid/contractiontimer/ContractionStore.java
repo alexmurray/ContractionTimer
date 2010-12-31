@@ -53,13 +53,47 @@ public class ContractionStore {
 					ID + " = " + id, null) == 1);
 	}
 
+	private Cursor getCursor(String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+		Cursor cursor = null;
+
+		try {
+			cursor = db.query(CONTRACTIONS_TABLE_NAME,
+					new String[]{ID, START_MILLIS, LENGTH_MILLIS},
+					selection, selectionArgs, groupBy, having, orderBy, limit);
+		} catch (SQLException e) {
+			Log.e(TAG, "DB Error: " + e.toString());
+			e.printStackTrace();
+		}
+		return cursor;
+	}
+
+	private ArrayList<Contraction> getContractionsReversed(String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+		ArrayList<Contraction> contractions = new ArrayList<Contraction>();
+
+		Cursor cursor = getCursor(selection, selectionArgs, groupBy, having, orderBy, limit);
+		if (cursor != null) {
+			/* move to last row */
+			cursor.moveToLast();
+
+			if (!cursor.isBeforeFirst())
+			{
+				do {
+					contractions.add(new Contraction(cursor.getLong(cursor.getColumnIndex(ID)),
+								cursor.getLong(cursor.getColumnIndex(START_MILLIS)),
+								cursor.getLong(cursor.getColumnIndex(LENGTH_MILLIS))));
+				} while (cursor.moveToPrevious());
+			}
+			/* finished with cursor */
+			cursor.close();
+		}
+		return contractions;
+	}
+
 	private ArrayList<Contraction> getContractions(String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 		ArrayList<Contraction> contractions = new ArrayList<Contraction>();
 
-		try {
-			Cursor cursor = db.query(CONTRACTIONS_TABLE_NAME,
-					new String[]{ID, START_MILLIS, LENGTH_MILLIS},
-					selection, selectionArgs, groupBy, having, orderBy, limit);
+		Cursor cursor = getCursor(selection, selectionArgs, groupBy, having, orderBy, limit);
+		if (cursor != null) {
 			/* move to first row */
 			cursor.moveToFirst();	
 
@@ -73,9 +107,6 @@ public class ContractionStore {
 			}
 			/* finished with cursor */
 			cursor.close();
-		} catch (SQLException e) {
-			Log.e(TAG, "DB Error: " + e.toString());
-			e.printStackTrace();
 		}
 		return contractions;
 	}
@@ -85,11 +116,16 @@ public class ContractionStore {
 	}
 
 	/**
-	 * Returns an ArrayList of the n most recent contractions sorted
-	 * from newest to oldest - if n is less than or equal to zero returns all
+	 * Returns an ArrayList of the n most recent contractions sorted asceding
+	 * if ascending is true (descending otherwise) - if n is less than or equal
+	 * to zero returns all
 	 */
-	public ArrayList<Contraction> getRecentContractions(int n) {
-		return getContractions(null, null, null, null, START_MILLIS + " DESC", n > 0 ? Integer.toString(n) : null);
+	public ArrayList<Contraction> getRecentContractions(int n, boolean ascending) {
+		if (ascending) {
+			return getContractionsReversed(null, null, null, null, START_MILLIS + " DESC", n > 0 ? Integer.toString(n) : null);
+		} else {
+			return getContractions(null, null, null, null, START_MILLIS + " DESC", n > 0 ? Integer.toString(n) : null);
+		}
 	}
 
 	/**

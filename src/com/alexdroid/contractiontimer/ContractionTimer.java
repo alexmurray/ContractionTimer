@@ -23,30 +23,28 @@ import java.util.Iterator;
 public class ContractionTimer extends Activity
 {
 	private static final String TAG = "ContractionTimer";
-	private static final int N_AVERAGE = 5;
+	private static final int N_RECENT = 5;
 	private static final long MAX_ACTIVE_PHASE_PERIOD = 4000 * 60;
 	private static final long MAX_TRANSITIONAL_PHASE_PERIOD = 2000 * 60;
 
 	private CountDownTimer mCountDownTimer;
 	private Chronometer mTimer;
 	private ToggleButton mButton;
-	private TextView mPhase, mPreviousLength, mAverageLength, mPreviousPeriod, mAveragePeriod, mTimerFunction;
+	private TextView mPhase, mPreviousLength, mPredictedLength, mPreviousPeriod, mPredictedPeriod, mTimerFunction;
 	private ContractionStore mStore;
 
 	private void updateUI()
 	{
 		long previousLengthMillis = 0;
 		long previousPeriodMillis = 0;
-		long averageLengthMillis = 0;
-		long averagePeriodMillis = 0;
-		long numContractions = 0;
-		long numPeriods = 0;
+		long predictedLengthMillis = 0;
+		long predictedPeriodMillis = 0;
 		Contraction current = null;
 		Contraction previous = null;
 
 		/* get the two most recent contractions to find out if have a current
-		 * and previous contraction */
-		ArrayList<Contraction> contractions = mStore.getRecentContractions(2);
+		 * and previous contraction - get in descending order */
+		ArrayList<Contraction> contractions = mStore.getRecentContractions(2, false);
 		if (contractions.size() > 0) {
 			Contraction contraction = contractions.get(0);
 			if (contraction.getLengthMillis() == 0) {
@@ -72,41 +70,38 @@ public class ContractionTimer extends Activity
 				DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
 				null);
 
-		/* calculate average of the N_AVERAGE most recent contractions */
-		contractions = mStore.getRecentContractions(N_AVERAGE);
-		Log.v(TAG, "Calculating averages of " + N_AVERAGE + " most recent contractions " + contractions.toString());
+		/* calculate predicted next contraction length and period from the
+		 * N_RECENT most recent contractions - get ascending from oldest to
+		 * newest */
+		contractions = mStore.getRecentContractions(N_RECENT, true);
+		Log.v(TAG, "Calculating predicted next from " + N_RECENT + " most recent contractions " + contractions.toString());
 		Contraction prev = null;
+		LeastSquaresEstimator lengthEstimator = new LeastSquaresEstimator();
+		LeastSquaresEstimator periodEstimator = new LeastSquaresEstimator();
 		for (Contraction c : contractions) {
 			if (current == null || c.getID() != current.getID()) {
-				averageLengthMillis += c.getLengthMillis();
-				numContractions++;
+				lengthEstimator.addValue(c.getLengthMillis());
 			}
 			if (prev != null) {
-				/* contractions are sorted newest to oldest so prev actually
-				 * occurred before c */
-				averagePeriodMillis += prev.getStartMillis() - c.getStartMillis();
-				numPeriods++;
+				/* contractions are sorted oldest to newest */
+				periodEstimator.addValue(c.getStartMillis() - prev.getStartMillis());
 			}
 			prev = c;
 		}
-		if (numContractions > 0) {
-			averageLengthMillis /= numContractions;
-		}
-		if (numPeriods > 0) {
-			averagePeriodMillis /= numPeriods;
-		}
-		Log.v(TAG, "Calculated averageLengthMillis = " + averageLengthMillis + " averagePeriodMillis = " + averagePeriodMillis);
-		mAverageLength.setText(averageLengthMillis > 0 ?
-				DateUtils.formatElapsedTime(averageLengthMillis / 1000) :
+		predictedLengthMillis = lengthEstimator.getNext();
+		predictedPeriodMillis = periodEstimator.getNext();
+		Log.v(TAG, "Calculated predictedLengthMillis = " + predictedLengthMillis + " predictedPeriodMillis = " + predictedPeriodMillis);
+		mPredictedLength.setText(predictedLengthMillis > 0 ?
+				DateUtils.formatElapsedTime(predictedLengthMillis / 1000) :
 				null);
-		mAveragePeriod.setText(averagePeriodMillis > 0 ?
-				DateUtils.formatElapsedTime(averagePeriodMillis / 1000) :
+		mPredictedPeriod.setText(predictedPeriodMillis > 0 ?
+				DateUtils.formatElapsedTime(predictedPeriodMillis / 1000) :
 				null);
-		int phaseTextID = (averagePeriodMillis > MAX_ACTIVE_PHASE_PERIOD ?
+		int phaseTextID = (predictedPeriodMillis > MAX_ACTIVE_PHASE_PERIOD ?
 				R.string.latent_phase_text :
-				averagePeriodMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
+				predictedPeriodMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
 				R.string.active_phase_text :
-				averagePeriodMillis > 0 ? R.string.transitional_phase_text :
+				predictedPeriodMillis > 0 ? R.string.transitional_phase_text :
 				-1);
 		if (phaseTextID > 0) {
 			mPhase.setText(phaseTextID);
@@ -129,49 +124,14 @@ public class ContractionTimer extends Activity
 					 current.getStartMillis()));
 			mTimer.start();
 		} else {
-			/* calculate time till next contraction if not currently having one
-			 * using least squares method - we calculate from oldest to newest
-			 * */
-			long nextContractionMillis = 0;
-			contractions = mStore.getAllContractions();
-			/* only do if have at least 3 data points */
-			if (contractions.size() > 2) {
-				long n = 0;
-				long prevStartMillis = 0;
-				long sumX = 0;
-				long sumY = 0;
-				long sumXX = 0;
-				long sumXY = 0;
-
-				for (Contraction contraction : contractions) {
-					long startMillis = contraction.getStartMillis();
-					if (prevStartMillis > 0) {
-						long y = startMillis - prevStartMillis;
-
-						sumX += n;
-						sumXX += n * n;
-						sumY += y;
-						sumXY += n * y;
-						n++;
-					}
-					prevStartMillis = startMillis;
-				}
-				long m = ((n * sumXY) - (sumX * sumY)) /
-					((n * sumXX) - (sumX * sumX));
-				long c = (sumY - (m * sumX)) / n;
-				long nextPeriodMillis = (m * n) + c;
-
-				nextContractionMillis = nextPeriodMillis - 
-					(java.lang.System.currentTimeMillis() - prevStartMillis);
-
-				Log.v(TAG, "Estimated next period length: " + nextPeriodMillis);
-			}
 			/* not having a contraction so set button to unchecked and stop any
 			 * timer */
 			mButton.setChecked(false);
 			mTimer.stop();
 			/* use mTimer to display the amount of time till next contraction */
-			if (nextContractionMillis > 0) {
+			if (predictedPeriodMillis > 0) {
+				long nextContractionMillis = predictedPeriodMillis - 
+					(java.lang.System.currentTimeMillis() - previous.getStartMillis());
 				mTimerFunction.setText(R.string.countdown_label_text);
 				mTimer.setText(DateUtils.formatElapsedTime(nextContractionMillis / 1000));
 				/* create a countdown timer to update the value of the timer
@@ -186,7 +146,7 @@ public class ContractionTimer extends Activity
 						mTimer.setText(null);
 					}
 				}.start();
-			} else if (nextContractionMillis <= 0) {
+			} else {
 				/* use default hint when nothing to display */
 				mTimerFunction.setText(null);
 				mTimer.setText(null);
@@ -202,9 +162,9 @@ public class ContractionTimer extends Activity
 		setContentView(R.layout.contraction_timer);
 
 		mPhase = (TextView)findViewById(R.id.phase_label);
-		mAverageLength = (TextView)findViewById(R.id.average_length_value);
+		mPredictedLength = (TextView)findViewById(R.id.predicted_length_value);
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
-		mAveragePeriod = (TextView)findViewById(R.id.average_period_value);
+		mPredictedPeriod = (TextView)findViewById(R.id.predicted_period_value);
 		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
 		mTimerFunction = (TextView)findViewById(R.id.timer_function_label);
 		mTimer = (Chronometer)findViewById(R.id.timer);
@@ -214,8 +174,9 @@ public class ContractionTimer extends Activity
 		mButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				/* see if we are in the middle of a contraction */
-				ArrayList<Contraction> contractions = mStore.getRecentContractions(1);
+				ArrayList<Contraction> contractions = mStore.getRecentContractions(1, false);
 				Contraction contraction = contractions.size() > 0 ? contractions.get(0) : null;
+				Log.v(TAG, "Button click: contraction: " + contraction);
 				if (contraction == null ||
 					contraction.getLengthMillis() > 0) {
 					/* start a contraction at the current
@@ -266,7 +227,7 @@ public class ContractionTimer extends Activity
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		/* set state of menu options depending on if have any available
 		 * */
-		boolean available = ((mStore.getRecentContractions(1)).size() > 0);
+		boolean available = ((mStore.getRecentContractions(1, false)).size() > 0);
 		menu.findItem(R.id.list_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.graph_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.reset_menu_item).setEnabled(available);
