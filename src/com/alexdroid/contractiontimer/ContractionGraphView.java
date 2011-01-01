@@ -147,8 +147,6 @@ public class ContractionGraphView extends HorizontalScrollView {
 			};
 			int dh = 0;
 
-			Path path = new Path();
-
 			Log.v(TAG, "mResolution: " + mResolution);
 			for (int i = 0; i < NUM_TIME_SCALES; i++) {
 				/* draw ticks for each time scale but only if resolution is
@@ -166,12 +164,9 @@ public class ContractionGraphView extends HorizontalScrollView {
 					/* convert ms to dp */
 					double x = (ms - mMinMillis) * mResolution;
 					while (x < w) {
-						path.addRect(
-								(float)x,
-								(float)(h - dh),
-								(float)(x + 1.0),
-								(float)(h - dh) + tickLength,
-								Path.Direction.CW);
+						canvas.drawLine((float)x, (float)(h - dh),
+								(float)x, (float)(h - dh) + tickLength,
+								mDrawable.getPaint());
 						/* draw labels if can fit in between each tick */
 						if (dp > mDrawable.getPaint().measureText(FORMATS[i])) {
 							canvas.drawText((String)DateFormat.format(FORMATS[i], ms),
@@ -183,7 +178,6 @@ public class ContractionGraphView extends HorizontalScrollView {
 					break;
 				}
 			}
-			canvas.drawPath(path, mDrawable.getPaint());
 			/* return the height we drew into */
 			return dh;
 		}
@@ -223,6 +217,9 @@ public class ContractionGraphView extends HorizontalScrollView {
 			mDrawable.setBounds(0, 0, w, h);
 			mDrawable.setShape(new PathShape(path, w, h));
 			mDrawable.draw(canvas);
+
+			/* draw x axis */
+			canvas.drawLine(0.f, (float)h, (float)w, (float)h, mDrawable.getPaint());
 		}
 
 		public void setContractions(ArrayList<Contraction> contractions) {
