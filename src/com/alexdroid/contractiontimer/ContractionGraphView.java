@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Canvas;
 import android.text.format.DateFormat;
@@ -88,6 +89,7 @@ public class ContractionGraphView extends HorizontalScrollView {
 		public ContractionGraph(Context context) {
 			super(context);
 			mDrawable = new ShapeDrawable();
+			mDrawable.getPaint().setTextAlign(Paint.Align.CENTER);
 		}
 
 		public void setColor(int color) {
@@ -150,17 +152,16 @@ public class ContractionGraphView extends HorizontalScrollView {
 			Log.v(TAG, "mResolution: " + mResolution);
 			for (int i = 0; i < NUM_TIME_SCALES; i++) {
 				/* draw ticks for each time scale but only if resolution is
-				 * okay - i.e. if ticks will be more than 20 pixels apart then
+				 * okay - i.e. if ticks will be more than 5 pixels apart then
 				 * draw */
 				double dp = mResolution * LENGTHS[i];
-				if (dp > 20.0) {
+
+				if (dp > 5.0) {
 					/* round up to next unit */
 					long ms = (mMinMillis + LENGTHS[i]);
 					float tickLength = (float)fontHeight / (NUM_TIME_SCALES - i);
 					dh = fontHeight + (int)Math.ceil(tickLength);
-					Log.v(TAG, "Would draw " + i + " at " + dp + "dp apart and " + tickLength + " high");
 					ms -= (ms % LENGTHS[i]);
-					Log.v(TAG, "mMinMillis rounded to " + i + ": " + ms);
 
 					/* convert ms to dp */
 					double x = (ms - mMinMillis) * mResolution;
@@ -171,8 +172,11 @@ public class ContractionGraphView extends HorizontalScrollView {
 								(float)(x + 1.0),
 								(float)(h - dh) + tickLength,
 								Path.Direction.CW);
-						canvas.drawText((String)DateFormat.format(FORMATS[i], ms),
-								(float)x, (float)h, mDrawable.getPaint());
+						/* draw labels if can fit in between each tick */
+						if (dp > mDrawable.getPaint().measureText(FORMATS[i])) {
+							canvas.drawText((String)DateFormat.format(FORMATS[i], ms),
+								   	(float)x, (float)h, mDrawable.getPaint());
+						}
 						ms += LENGTHS[i];
 						x = (ms - mMinMillis) * mResolution;
 					}
