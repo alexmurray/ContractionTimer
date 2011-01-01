@@ -120,7 +120,7 @@ public class ContractionTimer extends Activity
 			mTimerFunction.setText(R.string.countup_label_text);
 			mButton.setChecked(true);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
-					(java.lang.System.currentTimeMillis() -
+					(System.currentTimeMillis() -
 					 current.getStartMillis()));
 			mTimer.start();
 		} else {
@@ -131,7 +131,7 @@ public class ContractionTimer extends Activity
 			/* use mTimer to display the amount of time till next contraction */
 			if (predictedPeriodMillis > 0) {
 				long nextContractionMillis = predictedPeriodMillis - 
-					(java.lang.System.currentTimeMillis() - previous.getStartMillis());
+					(System.currentTimeMillis() - previous.getStartMillis());
 				mTimerFunction.setText(R.string.countdown_label_text);
 				mTimer.setText(DateUtils.formatElapsedTime(nextContractionMillis / 1000));
 				/* create a countdown timer to update the value of the timer
@@ -181,7 +181,7 @@ public class ContractionTimer extends Activity
 					contraction.getLengthMillis() > 0) {
 					/* start a contraction at the current
 					 * time */
-					long id = mStore.startContraction(java.lang.System.currentTimeMillis());
+					long id = mStore.startContraction(System.currentTimeMillis());
 					Log.v(TAG, "Created new contraction " + mStore.getContraction(id));
 					/* set mTimer to count from now */
 					mTimer.setBase(android.os.SystemClock.elapsedRealtime());
