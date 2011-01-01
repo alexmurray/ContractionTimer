@@ -199,7 +199,6 @@ public class ContractionGraphView extends HorizontalScrollView {
 			h -= dh;
 
 			float w_scale = (float)w / (float)(mMaxMillis - mMinMillis);
-			float h_scale = (float)h / (float)mMaxLengthMillis;
 
 			Path path = new Path();
 
@@ -207,11 +206,12 @@ public class ContractionGraphView extends HorizontalScrollView {
 			for (Contraction contraction : mContractions) {
 				float start = (contraction.getStartMillis() - mMinMillis) * w_scale;
 				float length = (contraction.getLengthMillis() * w_scale);
-				float height = contraction.getLengthMillis() * h_scale;
+				float height = ((float)contraction.getLengthMillis() / (float)mMaxLengthMillis) * h;
+				Log.v(TAG, "start: " + start + " height: " + height);
 
 				path.moveTo(start, (float)h);
-				path.cubicTo(start + (length / 3),  height / 2,
-						start + (2 * length / 3), height / 2,
+				path.cubicTo(start + (length / 3),  h - height,
+						start + (2 * length / 3), h - height,
 						start + length, (float)h);
 				path.close();
 			}
