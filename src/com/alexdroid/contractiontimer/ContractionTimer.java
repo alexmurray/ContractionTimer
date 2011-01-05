@@ -33,8 +33,7 @@ public class ContractionTimer extends Activity
 	private TextView mPhase, mPreviousLength, mPredictedLength, mPreviousPeriod, mPredictedPeriod, mTimerFunction;
 	private ContractionStore mStore;
 
-	private void updateUI()
-	{
+	private void updateUI() {
 		long previousLengthMillis = 0;
 		long previousPeriodMillis = 0;
 		long predictedLengthMillis = 0;
@@ -63,12 +62,12 @@ public class ContractionTimer extends Activity
 
 		Log.v(TAG, "Updating UI: current = " + current + " previous = " + previous);
 		mPreviousLength.setText(previous != null ?
-				DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000) :
-				null);
+					DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000) :
+					null);
 		Log.v(TAG, "previousPeriodMillis = " + previousPeriodMillis);
 		mPreviousPeriod.setText(previousPeriodMillis > 0 ?
-				DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
-				null);
+					DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
+					null);
 
 		/* calculate predicted next contraction length and period from the
 		 * N_RECENT most recent contractions - get ascending from oldest to
@@ -92,17 +91,17 @@ public class ContractionTimer extends Activity
 		predictedPeriodMillis = periodEstimator.getNext();
 		Log.v(TAG, "Calculated predictedLengthMillis = " + predictedLengthMillis + " predictedPeriodMillis = " + predictedPeriodMillis);
 		mPredictedLength.setText(predictedLengthMillis > 0 ?
-				DateUtils.formatElapsedTime(predictedLengthMillis / 1000) :
-				null);
+					 DateUtils.formatElapsedTime(predictedLengthMillis / 1000) :
+					 null);
 		mPredictedPeriod.setText(predictedPeriodMillis > 0 ?
-				DateUtils.formatElapsedTime(predictedPeriodMillis / 1000) :
-				null);
+					 DateUtils.formatElapsedTime(predictedPeriodMillis / 1000) :
+					 null);
 		int phaseTextID = (predictedPeriodMillis > MAX_ACTIVE_PHASE_PERIOD ?
-				R.string.latent_phase_text :
-				predictedPeriodMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
-				R.string.active_phase_text :
-				predictedPeriodMillis > 0 ? R.string.transitional_phase_text :
-				-1);
+				   R.string.latent_phase_text :
+				   predictedPeriodMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
+				   R.string.active_phase_text :
+				   predictedPeriodMillis > 0 ? R.string.transitional_phase_text :
+				   -1);
 		if (phaseTextID > 0) {
 			mPhase.setText(phaseTextID);
 		} else {
@@ -120,8 +119,8 @@ public class ContractionTimer extends Activity
 			mTimerFunction.setText(R.string.countup_label_text);
 			mButton.setChecked(true);
 			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
-					(System.currentTimeMillis() -
-					 current.getStartMillis()));
+				       (System.currentTimeMillis() -
+					current.getStartMillis()));
 			mTimer.start();
 		} else {
 			/* not having a contraction so set button to unchecked and stop any
@@ -137,15 +136,15 @@ public class ContractionTimer extends Activity
 				/* create a countdown timer to update the value of the timer
 				 * for us to show how long till next contraction */
 				mCountDownTimer = new CountDownTimer(nextContractionMillis, 1000) {
-					public void onTick(long millisUntilFinished) {
-						mTimer.setText(DateUtils.formatElapsedTime(millisUntilFinished / 1000));
-					}
-					public void onFinish() {
-						/* use default hint when nothing to display */
-						mTimerFunction.setText(null);
-						mTimer.setText(null);
-					}
-				}.start();
+						public void onTick(long millisUntilFinished) {
+							mTimer.setText(DateUtils.formatElapsedTime(millisUntilFinished / 1000));
+						}
+						public void onFinish() {
+							/* use default hint when nothing to display */
+							mTimerFunction.setText(null);
+							mTimer.setText(null);
+						}
+					}.start();
 			} else {
 				/* use default hint when nothing to display */
 				mTimerFunction.setText(null);
@@ -156,8 +155,7 @@ public class ContractionTimer extends Activity
 
 	/** Called when the activity is first created. */
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contraction_timer);
 
@@ -172,33 +170,33 @@ public class ContractionTimer extends Activity
 
 		/* register listener for click events */
 		mButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				/* see if we are in the middle of a contraction */
-				ArrayList<Contraction> contractions = mStore.getRecentContractions(1, false);
-				Contraction contraction = contractions.size() > 0 ? contractions.get(0) : null;
-				Log.v(TAG, "Button click: contraction: " + contraction);
-				if (contraction == null ||
-					contraction.getLengthMillis() > 0) {
-					/* start a contraction at the current
-					 * time */
-					long id = mStore.startContraction(System.currentTimeMillis());
-					Log.v(TAG, "Created new contraction " + mStore.getContraction(id));
-					/* set mTimer to count from now */
-					mTimer.setBase(android.os.SystemClock.elapsedRealtime());
-				} else {
-					long length = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
+				public void onClick(View v) {
+					/* see if we are in the middle of a contraction */
+					ArrayList<Contraction> contractions = mStore.getRecentContractions(1, false);
+					Contraction contraction = contractions.size() > 0 ? contractions.get(0) : null;
+					Log.v(TAG, "Button click: contraction: " + contraction);
+					if (contraction == null ||
+					    contraction.getLengthMillis() > 0) {
+						/* start a contraction at the current
+						 * time */
+						long id = mStore.startContraction(System.currentTimeMillis());
+						Log.v(TAG, "Created new contraction " + mStore.getContraction(id));
+						/* set mTimer to count from now */
+						mTimer.setBase(android.os.SystemClock.elapsedRealtime());
+					} else {
+						long length = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
 
-					mStore.setLength(contraction.getID(), length);
-					Log.v(TAG, "Set length of contraction " + mStore.getContraction(contraction.getID()));
+						mStore.setLength(contraction.getID(), length);
+						Log.v(TAG, "Set length of contraction " + mStore.getContraction(contraction.getID()));
+					}
+					updateUI();
 				}
-				updateUI();
 			}
-		});
+			);
 	}
 
 	@Override
-	protected void onResume()
-	{
+	protected void onResume() {
 		super.onResume();
 
 		Log.v(TAG, "onResume");
@@ -209,8 +207,7 @@ public class ContractionTimer extends Activity
 	}
 
 	@Override
-	protected void onPause()
-	{
+	protected void onPause() {
 		super.onPause();
 
 		Log.v(TAG, "onPause");
@@ -243,25 +240,25 @@ public class ContractionTimer extends Activity
 	protected Dialog onCreateDialog(int id, Bundle args) {
 		Dialog dialog = null;
 		switch (id) {
-			case 0:
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage(R.string.confirm_reset_text)
-					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+		case 0:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.confirm_reset_text)
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 							mStore.deleteAll();
 							updateUI();
 						}
 					})
 				.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-					}
-				});
-				dialog = builder.create();
-				break;
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+			dialog = builder.create();
+			break;
 
-			default:
-				Log.e(TAG, "Unknown dialog id " + id);
+		default:
+			Log.e(TAG, "Unknown dialog id " + id);
 		}
 		Log.v(TAG, "Created dialog for id " + id);
 		return dialog;
@@ -270,17 +267,17 @@ public class ContractionTimer extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.list_contractions_menu_item:
-				startActivity(new Intent(this, ContractionList.class));
-				return true;
-			case R.id.graph_contractions_menu_item:
-				startActivity(new Intent(this, ContractionGrapher.class));
-				return true;
-			case R.id.reset_menu_item:
-				showDialog(0);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		case R.id.list_contractions_menu_item:
+			startActivity(new Intent(this, ContractionList.class));
+			return true;
+		case R.id.graph_contractions_menu_item:
+			startActivity(new Intent(this, ContractionGrapher.class));
+			return true;
+		case R.id.reset_menu_item:
+			showDialog(0);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 }
