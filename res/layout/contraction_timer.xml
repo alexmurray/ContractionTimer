@@ -7,65 +7,72 @@
 		style="@style/PhaseHeadingStyle"
 		android:id="@+id/phase_label"
 		android:hint="@string/latent_phase_text"/>
-	<TableLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
-		<TableRow>
-			<TextView
-				style="@style/HeadingStyle"
-				android:id="@+id/previous_heading_label"
-				android:text="@string/previous_heading_label_text"/>
-		</TableRow>
-		<TableRow>
-			<TextView
-				style="@style/TextLabelStyle"
-				android:id="@+id/previous_length_label"
-				android:text="@string/length_label_text"/>
-			<TextView
-				style="@style/TextValueStyle"
-				android:id="@+id/previous_length_value"
-				android:hint="@string/none_text"/>
-			<TextView
-				style="@style/TextLabelStyle"
-				android:id="@+id/previous_period_label"
-				android:text="@string/period_label_text"/>
-			<TextView
-				style="@style/TextValueStyle"
-				android:id="@+id/previous_period_value"
-				android:hint="@string/none_text"/>
-		</TableRow>
-		<TableRow>
-			<TextView
-				style="@style/HeadingStyle"
-				android:id="@+id/predicted_heading_label"
-				android:text="@string/predicted_heading_label_text"/>
-		</TableRow>
-		<TableRow>
-			<TextView
-				style="@style/TextLabelStyle"
-				android:id="@+id/predicted_length_label"
-				android:text="@string/length_label_text"/>
-			<TextView
-				style="@style/TextValueStyle"
-				android:id="@+id/predicted_length_value"
-				android:hint="@string/none_text"/>
-			<TextView
-				style="@style/TextLabelStyle"
-				android:id="@+id/predicted_period_label"
-				android:text="@string/period_label_text"/>
-			<TextView
-				style="@style/TextValueStyle"
-				android:id="@+id/predicted_period_value"
-				android:hint="@string/none_text"/>
-		</TableRow>
-	</TableLayout>
 	<TextView
-		style="@style/SmallTextLabelStyle"
+	    style="@style/HeadingStyle"
+	    android:id="@+id/previous_heading_label"
+	    android:layout_span="4"
+	    android:text="@string/previous_heading_label_text"/>
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	  <TextView
+	      style="@style/TextLabelStyle"
+	      android:id="@+id/previous_length_label"
+	      android:layout_weight="0.25"
+	      android:text="@string/length_label_text"/>
+	  <TextView
+	      style="@style/TextValueStyle"
+	      android:id="@+id/previous_length_value"
+	      android:layout_weight="0.25"
+	      android:hint="@string/none_text"/>
+	  <TextView
+	      style="@style/TextLabelStyle"
+	      android:id="@+id/previous_period_label"
+	      android:layout_weight="0.25"
+	      android:text="@string/period_label_text"/>
+	  <TextView
+	      style="@style/TextValueStyle"
+	      android:id="@+id/previous_period_value"
+	      android:layout_weight="0.25"
+	      android:hint="@string/none_text"/>
+	</LinearLayout>
+	<TextView
+	    style="@style/HeadingStyle"
+	    android:id="@+id/predicted_heading_label"
+	    android:layout_span="4"
+	    android:text="@string/predicted_heading_label_text"/>
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	  <TextView
+	      style="@style/TextLabelStyle"
+	      android:id="@+id/predicted_length_label"
+	      android:layout_weight="0.25"
+	      android:text="@string/length_label_text"/>
+	  <TextView
+	      style="@style/TextValueStyle"
+	      android:id="@+id/predicted_length_value"
+	      android:layout_weight="0.25"
+	      android:hint="@string/none_text"/>
+	  <TextView
+	      style="@style/TextLabelStyle"
+	      android:id="@+id/predicted_period_label"
+	      android:layout_weight="0.25"
+	      android:text="@string/period_label_text"/>
+	  <TextView
+	      style="@style/TextValueStyle"
+	      android:id="@+id/predicted_period_value"
+	      android:layout_weight="0.25"
+	      android:hint="@string/none_text"/>
+	</LinearLayout>
+	<TextView
 		android:id="@+id/countdown_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:gravity="bottom|center_horizontal"
+		android:textStyle="bold"
+		android:textSize="13sp"
 		android:text="@string/countdown_label_text"/>
 	<com.alexdroid.contractiontimer.CountdownWidget
 		xmlns:app="http://schemas.android.com/apk/res/com.alexdroid.contractiontimer"
@@ -78,12 +85,13 @@
 		android:textSize="45sp"
 		android:hint="@string/none_text"/>
 	<TextView
-		style="@style/TextLabelStyle"
 		android:id="@+id/countup_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:gravity="bottom|center_horizontal"
+		android:textStyle="bold"
+		android:textSize="15sp"
 		android:text="@string/countup_label_text"/>
 	<Chronometer
 		android:id="@+id/countup_timer"
