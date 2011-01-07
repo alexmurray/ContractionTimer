@@ -6,7 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 import android.widget.Chronometer;
@@ -27,10 +27,10 @@ public class ContractionTimer extends Activity
 	private static final long MAX_ACTIVE_PHASE_PERIOD = 4000 * 60;
 	private static final long MAX_TRANSITIONAL_PHASE_PERIOD = 2000 * 60;
 
-	private CountDownTimer mCountDownTimer;
-	private Chronometer mTimer;
+	private CountdownWidget mCountdownTimer;
+	private Chronometer mCountupTimer;
 	private ToggleButton mButton;
-	private TextView mPhase, mPreviousLength, mPredictedLength, mPreviousPeriod, mPredictedPeriod, mTimerFunction;
+	private TextView mPhase, mPreviousLength, mPredictedLength, mPreviousPeriod, mPredictedPeriod;
 	private ContractionStore mStore;
 
 	private void updateUI() {
@@ -108,47 +108,33 @@ public class ContractionTimer extends Activity
 			mPhase.setText(null);
 		}
 
-		/* stop any countdown timer */
-		if (mCountDownTimer != null) {
-			mCountDownTimer.cancel();
-			mCountDownTimer = null;
-		}
-
 		if (current != null) {
 			/* set time based on start time of current contraction */
-			mTimerFunction.setText(R.string.countup_label_text);
 			mButton.setChecked(true);
-			mTimer.setBase(android.os.SystemClock.elapsedRealtime() -
+			mCountdownTimer.stop();
+			mCountdownTimer.setTime(SystemClock.elapsedRealtime());
+			mCountdownTimer.setText(null);
+			mCountupTimer.setBase(SystemClock.elapsedRealtime() -
 				       (System.currentTimeMillis() -
 					current.getStartMillis()));
-			mTimer.start();
+			mCountupTimer.start();
 		} else {
 			/* not having a contraction so set button to unchecked and stop any
 			 * timer */
 			mButton.setChecked(false);
-			mTimer.stop();
-			/* use mTimer to display the amount of time till next contraction */
+			mCountupTimer.stop();
+			mCountupTimer.setBase(SystemClock.elapsedRealtime());
+			mCountupTimer.setText(null);
 			if (predictedPeriodMillis > 0) {
-				long nextContractionMillis = predictedPeriodMillis - 
+				long nextContractionMillis = predictedPeriodMillis -
 					(System.currentTimeMillis() - previous.getStartMillis());
-				mTimerFunction.setText(R.string.countdown_label_text);
-				mTimer.setText(DateUtils.formatElapsedTime(nextContractionMillis / 1000));
-				/* create a countdown timer to update the value of the timer
-				 * for us to show how long till next contraction */
-				mCountDownTimer = new CountDownTimer(nextContractionMillis, 1000) {
-						public void onTick(long millisUntilFinished) {
-							mTimer.setText(DateUtils.formatElapsedTime(millisUntilFinished / 1000));
-						}
-						public void onFinish() {
-							/* use default hint when nothing to display */
-							mTimerFunction.setText(null);
-							mTimer.setText(null);
-						}
-					}.start();
+				mCountdownTimer.setTime(SystemClock.elapsedRealtime() +
+							nextContractionMillis);
+				mCountdownTimer.start();
 			} else {
-				/* use default hint when nothing to display */
-				mTimerFunction.setText(null);
-				mTimer.setText(null);
+				mCountdownTimer.stop();
+				mCountdownTimer.setTime(SystemClock.elapsedRealtime());
+				mCountdownTimer.setText(null);
 			}
 		}
 	}
@@ -164,8 +150,8 @@ public class ContractionTimer extends Activity
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
 		mPredictedPeriod = (TextView)findViewById(R.id.predicted_period_value);
 		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
-		mTimerFunction = (TextView)findViewById(R.id.timer_function_label);
-		mTimer = (Chronometer)findViewById(R.id.timer);
+		mCountdownTimer = (CountdownWidget)findViewById(R.id.countdown_timer);
+		mCountupTimer = (Chronometer)findViewById(R.id.countup_timer);
 		mButton = (ToggleButton)findViewById(R.id.button);
 
 		/* register listener for click events */
@@ -181,10 +167,11 @@ public class ContractionTimer extends Activity
 						 * time */
 						long id = mStore.startContraction(System.currentTimeMillis());
 						Log.v(TAG, "Created new contraction " + mStore.getContraction(id));
-						/* set mTimer to count from now */
-						mTimer.setBase(android.os.SystemClock.elapsedRealtime());
+						/* set mCountupTimer to count from now */
+						mCountupTimer.setBase(SystemClock.elapsedRealtime());
 					} else {
-						long length = android.os.SystemClock.elapsedRealtime() - mTimer.getBase();
+						long length = (SystemClock.elapsedRealtime()-
+							       mCountupTimer.getBase());
 
 						mStore.setLength(contraction.getID(), length);
 						Log.v(TAG, "Set length of contraction " + mStore.getContraction(contraction.getID()));

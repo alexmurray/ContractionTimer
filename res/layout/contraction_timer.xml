@@ -61,19 +61,35 @@
 	</TableLayout>
 	<TextView
 		style="@style/TextLabelStyle"
-		android:id="@+id/timer_function_label"
+		android:id="@+id/countdown_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
-		android:layout_weight="0.5"
 		android:gravity="bottom|center_horizontal"
-		android:hint="@string/countdown_label_text"/>
-	<Chronometer
-		android:id="@+id/timer"
+		android:text="@string/countdown_label_text"/>
+	<com.alexdroid.contractiontimer.CountdownWidget
+		xmlns:app="http://schemas.android.com/apk/res/com.alexdroid.contractiontimer"
+		android:id="@+id/countdown_timer"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
-		android:layout_weight="1.0"
+		android:gravity="center"
+		android:textStyle="bold"
+		android:textSize="65sp"
+		android:hint="@string/none_text"/>
+	<TextView
+		style="@style/TextLabelStyle"
+		android:id="@+id/countup_label"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:gravity="bottom|center_horizontal"
+		android:text="@string/countup_label_text"/>
+	<Chronometer
+		android:id="@+id/countup_timer"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
 		android:gravity="center"
 		android:textStyle="bold"
 		android:textSize="65sp"
