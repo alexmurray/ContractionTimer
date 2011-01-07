@@ -60,7 +60,7 @@
 		</TableRow>
 	</TableLayout>
 	<TextView
-		style="@style/TextLabelStyle"
+		style="@style/SmallTextLabelStyle"
 		android:id="@+id/countdown_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
 		android:layout_gravity="center"
 		android:gravity="center"
 		android:textStyle="bold"
-		android:textSize="65sp"
+		android:textSize="45sp"
 		android:hint="@string/none_text"/>
 	<TextView
 		style="@style/TextLabelStyle"
