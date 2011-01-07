@@ -2,7 +2,8 @@ package com.alexdroid.contractiontimer;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ZoomControls;
@@ -10,7 +11,7 @@ import android.widget.ZoomControls;
 public class ContractionGrapher extends Activity {
 	private ContractionGraphView mGraphView;
 	private ZoomControls mControls;
-	private CountDownTimer mTimer;
+	private static final int HIDE_CONTROLS_WHAT = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +38,16 @@ public class ContractionGrapher extends Activity {
 				}
 				mControls.setIsZoomInEnabled(enableZoomIn);
 				mControls.setIsZoomOutEnabled(enableZoomOut);
-				mControls.show();
-				if (mTimer != null) {
-					mTimer.cancel();
-					mTimer = null;
+				if (mHandler.hasMessages(HIDE_CONTROLS_WHAT)) {
+					/* already shown, just remove existing
+					   messages to avoid hiding early */
+					mHandler.removeMessages(HIDE_CONTROLS_WHAT);
+				} else {
+					mControls.show();
 				}
-				/* hide zoom controls after 5 seconds */
-				mTimer = new CountDownTimer(5000, 5000) {
-					public void onTick(long millisUntilFinished) {
-						/* nothing to do */
-					}
-					public void onFinish() {
-						mControls.hide();
-					}
-				}.start();
+				mHandler.sendMessageDelayed(Message.obtain(mHandler,
+									   HIDE_CONTROLS_WHAT),
+							    5000);
 				/* let other handlers see this event */
 				return false;
 			}
@@ -72,4 +69,13 @@ public class ContractionGrapher extends Activity {
 		});
 		mControls.hide();
 	}
+
+	private Handler mHandler = new Handler()
+		{
+			public void handleMessage(Message m) {
+				if (m.what == HIDE_CONTROLS_WHAT) {
+					mControls.hide();
+				}
+			}
+		};
 }
