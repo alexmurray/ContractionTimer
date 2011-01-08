@@ -7,6 +7,7 @@
 		android:targetSdkVersion="8" />
 	<application android:label="@string/contraction_timer_name"
 		android:icon="@drawable/icon"
+		android:theme="@android:style/Theme.Light"
 		android:debuggable="true">
 		<activity android:name="ContractionTimer"
 			android:label="@string/contraction_timer_name">
