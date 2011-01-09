@@ -95,7 +95,7 @@ public class ContractionStore {
 		Cursor cursor = getCursor(selection, selectionArgs, groupBy, having, orderBy, limit);
 		if (cursor != null) {
 			/* move to first row */
-			cursor.moveToFirst();	
+			cursor.moveToFirst();
 
 			if (!cursor.isAfterLast())
 			{
@@ -133,6 +133,11 @@ public class ContractionStore {
 	 */
 	public ArrayList<Contraction> getAllContractions() {
 		return getContractions(null, null, null, null, START_MILLIS + " ASC", null);
+	}
+
+	public int delete(long id)
+	{
+		return db.delete(CONTRACTIONS_TABLE_NAME, ID + " = " + id, null);
 	}
 
 	public int deleteAll()
