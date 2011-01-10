@@ -1,14 +1,10 @@
 
-* Refactoring
+* Graph
+- Draw axes of graph in separate colour and perhaps think about
+   changing how we label axes as well
 
-- Get rid of as many short lived objects as possible to avoid lots of
-   gabage collection - in particular look at how the Android
-   Chronometer class is implemented and think about implementing our
-   own version for counting down etc - also for hiding zoom controls
-   in ContractionGraph too
+* Icons
+- Get / find icons for list and graph actions
 
-* UI Changes
-
-- Add seperate widgets to count into next contraction rather than
-   reusing contraction length timer since is confusing to the user
-
+* List
+- Add option to manually enter a contraction / edit existing contractions
