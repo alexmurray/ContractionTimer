@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="dark_red">#a00</color>
+  <!-- these are mainly from the android icon color palette -->
+  <color name="dark_red">#900</color>
   <color name="red">#c00</color>
-  <color name="dark_orange">#a40</color>
-  <color name="orange">#c60</color>
-  <color name="dark_green">#0a0</color>
-  <color name="green">#0d0</color>
-  <color name="lighter_gray">#ccc</color>
-  <color name="light_gray">#aaa</color>
-  <color name="gray">#333</color>
+  <color name="dark_orange">#f90</color>
+  <color name="orange">#f60</color>
+  <color name="light_green">#9c3</color>
+  <color name="green">#0c0</color>
+  <color name="dark_green">#690</color>
+  <color name="dark_yellow">#ca0</color>
+  <color name="yellow">#fc0</color>
+  <color name="lighter_gray">#bfbfbf</color>
+  <color name="light_gray">#808080</color>
+  <color name="gray">#404040</color>
 </resources>
