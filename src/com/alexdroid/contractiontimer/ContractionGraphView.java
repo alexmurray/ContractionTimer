@@ -27,9 +27,13 @@ public class ContractionGraphView extends HorizontalScrollView {
 
 		/* get and set custom parameters */
 		TypedArray array = context.obtainStyledAttributes(attrs,
-				R.styleable.ContractionGraphView);
-		mGraph.setColor(array.getColor(R.styleable.ContractionGraphView_graphColor, 0xff74AC23));
-		int textSize = array.getDimensionPixelOffset(R.styleable.ContractionGraphView_textSize, 0);
+								  R.styleable.ContractionGraphView);
+		mGraph.setGraphColor(array.getColor(R.styleable.ContractionGraphView_graphColor,
+						    0xff74AC23));
+		mGraph.setTextColor(array.getColor(R.styleable.ContractionGraphView_textColor,
+						   0xffffffff));
+		int textSize = array.getDimensionPixelOffset(R.styleable.ContractionGraphView_textSize,
+							     0);
 		if (textSize > 0) {
 			mGraph.setTextSize(textSize);
 		}
@@ -77,6 +81,7 @@ public class ContractionGraphView extends HorizontalScrollView {
 		private static final double MAX_RESOLUTION = 0.05;
 
 		private ShapeDrawable mDrawable;
+		private Paint mTextPaint;
 		private ArrayList<Contraction> mContractions;
 		private long mMaxLengthMillis;
 		private long mMinMillis;
@@ -89,15 +94,20 @@ public class ContractionGraphView extends HorizontalScrollView {
 		public ContractionGraph(Context context) {
 			super(context);
 			mDrawable = new ShapeDrawable();
-			mDrawable.getPaint().setTextAlign(Paint.Align.CENTER);
+			mTextPaint = new Paint(mDrawable.getPaint());
+			mTextPaint.setTextAlign(Paint.Align.CENTER);
 		}
 
-		public void setColor(int color) {
+		public void setGraphColor(int color) {
 			mDrawable.getPaint().setColor(color);
 		}
 
+		public void setTextColor(int color) {
+			mTextPaint.setColor(color);
+		}
+
 		public void setTextSize(int textSize) {
-			mDrawable.getPaint().setTextSize(textSize);
+			mTextPaint.setTextSize(textSize);
 		}
 
 		@Override
@@ -166,11 +176,11 @@ public class ContractionGraphView extends HorizontalScrollView {
 					while (x < w) {
 						canvas.drawLine((float)x, (float)(h - dh),
 								(float)x, (float)(h - dh) + tickLength,
-								mDrawable.getPaint());
+								mTextPaint);
 						/* draw labels if can fit in between each tick */
 						if (dp > mDrawable.getPaint().measureText(FORMATS[i])) {
 							canvas.drawText((String)DateFormat.format(FORMATS[i], ms),
-								   	(float)x, (float)h, mDrawable.getPaint());
+								   	(float)x, (float)h, mTextPaint);
 						}
 						ms += LENGTHS[i];
 						x = (ms - mMinMillis) * mResolution;
@@ -189,7 +199,7 @@ public class ContractionGraphView extends HorizontalScrollView {
 			}
 			int w = getWidth();
 			int h = getHeight();
-			int fontHeight = mDrawable.getPaint().getFontMetricsInt(null);
+			int fontHeight = mTextPaint.getFontMetricsInt(null);
 
 			int dh = drawTimeAxisLabels(canvas, fontHeight, w, h);
 
@@ -219,7 +229,7 @@ public class ContractionGraphView extends HorizontalScrollView {
 			mDrawable.draw(canvas);
 
 			/* draw x axis */
-			canvas.drawLine(0.f, (float)h, (float)w, (float)h, mDrawable.getPaint());
+			canvas.drawLine(0.f, (float)h, (float)w, (float)h, mTextPaint);
 		}
 
 		public void setContractions(ArrayList<Contraction> contractions) {
