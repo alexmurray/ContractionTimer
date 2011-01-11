@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <style name="BasicTextStyle">
-    <item name="android:textColor">#000</item>
-    <item name="android:textColorHint">#666</item>
+    <item name="android:textColor">@android:color/black</item>
+    <item name="android:textColorHint">@color/gray</item>
   </style>
   <style name="PhaseHeadingStyle">
-    <item name="android:textColor">#fff</item>
-    <item name="android:textColorHint">#ccc</item>
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textColorHint">@color/lighter_gray</item>
     <item name="android:textSize">22sp</item>
     <item name="android:textStyle">bold</item>
     <item name="android:gravity">center</item>
