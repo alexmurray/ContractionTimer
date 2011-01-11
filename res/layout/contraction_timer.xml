@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="#eeeeec">
+    android:orientation="vertical">
   <TextView
       style="@style/PhaseHeadingStyle"
       android:id="@+id/phase_label"
@@ -93,6 +92,7 @@
 	android:text="@string/countdown_label_text"/>
     <com.alexdroid.contractiontimer.CountdownWidget
 	xmlns:app="http://schemas.android.com/apk/res/com.alexdroid.contractiontimer"
+	style="@style/BasicTextStyle"
 	android:id="@+id/countdown_timer"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
@@ -110,6 +110,7 @@
 	android:gravity="bottom|center_horizontal"
 	android:text="@string/countup_label_text"/>
     <Chronometer
+	style="@style/BasicTextStyle"
 	android:id="@+id/countup_timer"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
@@ -127,8 +128,10 @@
       android:layout_gravity="center"
       android:layout_weight="0.2"
       android:gravity="center"
-      android:textSize="22sp"
+      android:textSize="30sp"
+      android:textStyle="bold"
       android:textOff="@string/start_text"
-      android:textOn="@string/stop_text"/>
+      android:textOn="@string/stop_text"
+      android:background="@drawable/green_red_button"/>
 </LinearLayout>
 
