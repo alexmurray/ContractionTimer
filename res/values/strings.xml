@@ -7,7 +7,7 @@
     <string name="previous_heading_label_text">Previous Contraction</string>
     <string name="predicted_heading_label_text">Predicted Next Contraction</string>
     <string name="length_label_text">Length:</string>
-    <string name="period_label_text">Period:</string>
+    <string name="period_label_text">Interval:</string>
     <string name="none_text">--:--</string>
     <string name="countup_label_text">Length of current contraction:</string>
     <string name="countdown_label_text">Time until next contraction:</string>
