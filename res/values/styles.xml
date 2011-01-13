@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <style name="BasicTextStyle">
+  <style name="BasicTextStyle" parent="@android:style/TextAppearance">
     <item name="android:textColor">@android:color/black</item>
     <item name="android:textColorHint">@color/gray</item>
   </style>
-  <style name="PhaseHeadingStyle">
+  <style name="PhaseHeadingStyle" parent="@android:style/TextAppearance">
     <item name="android:textColor">@android:color/white</item>
     <item name="android:textColorHint">@color/lighter_gray</item>
     <item name="android:textSize">22sp</item>
