@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
   <TextView
-      style="@style/PhaseHeadingStyle"
+      style="@style/LargeInverseHeadingStyle"
       android:id="@+id/phase_label"
       android:hint="@string/latent_phase_text"/>
   <LinearLayout
@@ -80,6 +80,7 @@
       android:layout_gravity="center"
       android:layout_margin="4dp"
       android:orientation="vertical"
+      android:layout_weight="0.3"
       android:background="@drawable/rounded_corners">
     <TextView
 	style="@style/HeadingStyle"
@@ -88,18 +89,18 @@
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
 	android:gravity="bottom|center_horizontal"
-	android:textSize="15sp"
 	android:text="@string/countdown_label_text"/>
     <com.alexdroid.contractiontimer.CountdownWidget
 	xmlns:app="http://schemas.android.com/apk/res/com.alexdroid.contractiontimer"
-	style="@style/BasicTextStyle"
+	style="@android:style/TextAppearance.Medium.Inverse"
 	android:id="@+id/countdown_timer"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
+	android:layout_weight="0.3"
 	android:gravity="center"
 	android:textStyle="bold"
-	android:textSize="45sp"
+	android:textSize="60sp"
 	android:hint="@string/none_text"/>
     <TextView
 	style="@style/HeadingStyle"
@@ -110,14 +111,15 @@
 	android:gravity="bottom|center_horizontal"
 	android:text="@string/countup_label_text"/>
     <Chronometer
-	style="@style/BasicTextStyle"
+	style="@android:style/TextAppearance.Inverse"
 	android:id="@+id/countup_timer"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
+	android:layout_weight="0.5"
 	android:gravity="center"
 	android:textStyle="bold"
-	android:textSize="65sp"
+	android:textSize="60sp"
 	android:hint="@string/none_text"/>
   </LinearLayout>
   <ToggleButton
@@ -126,7 +128,7 @@
       android:layout_height="wrap_content"
       android:layout_margin="4dp"
       android:layout_gravity="center"
-      android:layout_weight="0.2"
+      android:layout_weight="0.4"
       android:gravity="center"
       android:textSize="30sp"
       android:textStyle="bold"

@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <style name="BasicTextStyle" parent="@android:style/TextAppearance">
-    <item name="android:textColor">@android:color/black</item>
-    <item name="android:textColorHint">@color/gray</item>
-  </style>
-  <style name="PhaseHeadingStyle" parent="@android:style/TextAppearance">
-    <item name="android:textColor">@android:color/white</item>
-    <item name="android:textColorHint">@color/lighter_gray</item>
-    <item name="android:textSize">22sp</item>
+  <style name="LargeInverseHeadingStyle" parent="@android:style/TextAppearance.Large">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">wrap_content</item>
     <item name="android:textStyle">bold</item>
     <item name="android:gravity">center</item>
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">wrap_content</item>
   </style>
-  <style name="HeadingStyle" parent="BasicTextStyle">
-    <item name="android:textSize">16sp</item>
-    <item name="android:textStyle">bold</item>
+  <style name="LargeHeadingStyle" parent="@android:style/TextAppearance.Large.Inverse">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">wrap_content</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:gravity">center</item>
+  </style>
+  <style name="HeadingStyle" parent="@android:style/TextAppearance.Medium.Inverse">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textStyle">bold</item>
     <item name="android:layout_marginLeft">5dp</item>
     <item name="android:layout_marginRight">5dp</item>
   </style>
-  <style name="TextStyle" parent="BasicTextStyle">
-    <item name="android:textSize">15sp</item>
+  <style name="TextStyle" parent="@android:style/TextAppearance.Small.Inverse">
     <item name="android:layout_marginBottom">5dp</item>
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">wrap_content</item>
