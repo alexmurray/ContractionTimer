@@ -10,8 +10,7 @@
   <application
       android:label="@string/contraction_timer_name"
       android:theme="@android:style/Theme.NoTitleBar"
-      android:icon="@drawable/icon"
-      android:debuggable="true">
+      android:icon="@drawable/icon">
     <activity
 	android:name="ContractionTimer"
 	android:label="@string/contraction_timer_name"
