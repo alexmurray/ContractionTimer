@@ -167,9 +167,10 @@ public class ContractionGraphView extends HorizontalScrollView {
 				if (dp > 5.0) {
 					/* round up to next unit */
 					long ms = (mMinMillis + LENGTHS[i]);
-					float tickLength = (float)fontHeight / (NUM_TIME_SCALES - i);
-					dh = fontHeight + (int)Math.ceil(tickLength);
 					ms -= (ms % LENGTHS[i]);
+
+					int tickLength = fontHeight / 2;
+					dh = fontHeight + tickLength;
 
 					/* convert ms to dp */
 					double x = (ms - mMinMillis) * mResolution;
@@ -177,8 +178,11 @@ public class ContractionGraphView extends HorizontalScrollView {
 						canvas.drawLine((float)x, (float)(h - dh),
 								(float)x, (float)(h - dh) + tickLength,
 								mTextPaint);
-						/* draw labels if can fit in between each tick */
-						if (dp > mDrawable.getPaint().measureText(FORMATS[i])) {
+						/* label every tick if can fit,
+						 * otherwise label every 10th
+						 * tick */
+						if (dp > mDrawable.getPaint().measureText(FORMATS[i]) ||
+						    (ms / 10) % LENGTHS[i] == 0) {
 							canvas.drawText((String)DateFormat.format(FORMATS[i], ms),
 								   	(float)x, (float)h, mTextPaint);
 						}
