@@ -35,12 +35,12 @@
 	  android:hint="@string/none_text"/>
       <TextView
 	  style="@style/TextLabelStyle"
-	  android:id="@+id/previous_period_label"
+	  android:id="@+id/previous_interval_label"
 	  android:layout_weight="0.25"
-	  android:text="@string/period_label_text"/>
+	  android:text="@string/interval_label_text"/>
       <TextView
 	  style="@style/TextValueStyle"
-	  android:id="@+id/previous_period_value"
+	  android:id="@+id/previous_interval_value"
 	  android:layout_weight="0.25"
 	  android:hint="@string/none_text"/>
     </LinearLayout>
@@ -64,12 +64,12 @@
 	  android:hint="@string/none_text"/>
       <TextView
 	  style="@style/TextLabelStyle"
-	  android:id="@+id/predicted_period_label"
+	  android:id="@+id/predicted_interval_label"
 	  android:layout_weight="0.25"
-	  android:text="@string/period_label_text"/>
+	  android:text="@string/interval_label_text"/>
       <TextView
 	  style="@style/TextValueStyle"
-	  android:id="@+id/predicted_period_value"
+	  android:id="@+id/predicted_interval_value"
 	  android:layout_weight="0.25"
 	  android:hint="@string/none_text"/>
     </LinearLayout>

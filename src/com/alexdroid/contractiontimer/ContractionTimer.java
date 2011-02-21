@@ -30,14 +30,14 @@ public class ContractionTimer extends Activity
 	private CountdownWidget mCountdownTimer;
 	private Chronometer mCountupTimer;
 	private ToggleButton mButton;
-	private TextView mPhase, mPreviousLength, mPredictedLength, mPreviousPeriod, mPredictedPeriod;
+	private TextView mPhase, mPreviousLength, mPredictedLength, mPreviousInterval, mPredictedInterval;
 	private ContractionStore mStore;
 
 	private void updateUI() {
 		long previousLengthMillis = 0;
-		long previousPeriodMillis = 0;
+		long previousIntervalMillis = 0;
 		long predictedLengthMillis = 0;
-		long predictedPeriodMillis = 0;
+		long predictedIntervalMillis = 0;
 		Contraction current = null;
 		Contraction previous = null;
 
@@ -56,7 +56,7 @@ public class ContractionTimer extends Activity
 				previous = contraction;
 			}
 			if (contractions.size() > 1) {
-				previousPeriodMillis = contractions.get(0).getStartMillis() - contractions.get(1).getStartMillis();
+				previousIntervalMillis = contractions.get(0).getStartMillis() - contractions.get(1).getStartMillis();
 			}
 		}
 
@@ -64,43 +64,43 @@ public class ContractionTimer extends Activity
 		mPreviousLength.setText(previous != null ?
 					DateUtils.formatElapsedTime(previous.getLengthMillis() / 1000) :
 					null);
-		Log.v(TAG, "previousPeriodMillis = " + previousPeriodMillis);
-		mPreviousPeriod.setText(previousPeriodMillis > 0 ?
-					DateUtils.formatElapsedTime(previousPeriodMillis / 1000) :
+		Log.v(TAG, "previousIntervalMillis = " + previousIntervalMillis);
+		mPreviousInterval.setText(previousIntervalMillis > 0 ?
+					DateUtils.formatElapsedTime(previousIntervalMillis / 1000) :
 					null);
 
-		/* calculate predicted next contraction length and period from the
+		/* calculate predicted next contraction length and interval from the
 		 * N_RECENT most recent contractions - get ascending from oldest to
 		 * newest */
 		contractions = mStore.getRecentContractions(N_RECENT, true);
 		Log.v(TAG, "Calculating predicted next from " + N_RECENT + " most recent contractions " + contractions.toString());
 		Contraction prev = null;
 		LeastSquaresEstimator lengthEstimator = new LeastSquaresEstimator();
-		LeastSquaresEstimator periodEstimator = new LeastSquaresEstimator();
+		LeastSquaresEstimator intervalEstimator = new LeastSquaresEstimator();
 		for (Contraction c : contractions) {
 			if (current == null || c.getID() != current.getID()) {
 				lengthEstimator.addValue(c.getLengthMillis());
 			}
 			if (prev != null) {
 				/* contractions are sorted oldest to newest */
-				periodEstimator.addValue(c.getStartMillis() - prev.getStartMillis());
+				intervalEstimator.addValue(c.getStartMillis() - prev.getStartMillis());
 			}
 			prev = c;
 		}
 		predictedLengthMillis = lengthEstimator.getNext();
-		predictedPeriodMillis = periodEstimator.getNext();
-		Log.v(TAG, "Calculated predictedLengthMillis = " + predictedLengthMillis + " predictedPeriodMillis = " + predictedPeriodMillis);
+		predictedIntervalMillis = intervalEstimator.getNext();
+		Log.v(TAG, "Calculated predictedLengthMillis = " + predictedLengthMillis + " predictedIntervalMillis = " + predictedIntervalMillis);
 		mPredictedLength.setText(predictedLengthMillis > 0 ?
 					 DateUtils.formatElapsedTime(predictedLengthMillis / 1000) :
 					 null);
-		mPredictedPeriod.setText(predictedPeriodMillis > 0 ?
-					 DateUtils.formatElapsedTime(predictedPeriodMillis / 1000) :
+		mPredictedInterval.setText(predictedIntervalMillis > 0 ?
+					 DateUtils.formatElapsedTime(predictedIntervalMillis / 1000) :
 					 null);
-		int phaseTextID = (predictedPeriodMillis > MAX_ACTIVE_PHASE_PERIOD ?
+		int phaseTextID = (predictedIntervalMillis > MAX_ACTIVE_PHASE_PERIOD ?
 				   R.string.latent_phase_text :
-				   predictedPeriodMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
+				   predictedIntervalMillis > MAX_TRANSITIONAL_PHASE_PERIOD ?
 				   R.string.active_phase_text :
-				   predictedPeriodMillis > 0 ? R.string.transitional_phase_text :
+				   predictedIntervalMillis > 0 ? R.string.transitional_phase_text :
 				   -1);
 		if (phaseTextID > 0) {
 			mPhase.setText(phaseTextID);
@@ -125,8 +125,8 @@ public class ContractionTimer extends Activity
 			mCountupTimer.stop();
 			mCountupTimer.setBase(SystemClock.elapsedRealtime());
 			mCountupTimer.setText(null);
-			if (predictedPeriodMillis > 0) {
-				long nextContractionMillis = predictedPeriodMillis -
+			if (predictedIntervalMillis > 0) {
+				long nextContractionMillis = predictedIntervalMillis -
 					(System.currentTimeMillis() - previous.getStartMillis());
 				mCountdownTimer.setTime(SystemClock.elapsedRealtime() +
 							nextContractionMillis);
@@ -148,8 +148,8 @@ public class ContractionTimer extends Activity
 		mPhase = (TextView)findViewById(R.id.phase_label);
 		mPredictedLength = (TextView)findViewById(R.id.predicted_length_value);
 		mPreviousLength = (TextView)findViewById(R.id.previous_length_value);
-		mPredictedPeriod = (TextView)findViewById(R.id.predicted_period_value);
-		mPreviousPeriod = (TextView)findViewById(R.id.previous_period_value);
+		mPredictedInterval = (TextView)findViewById(R.id.predicted_interval_value);
+		mPreviousInterval = (TextView)findViewById(R.id.previous_interval_value);
 		mCountdownTimer = (CountdownWidget)findViewById(R.id.countdown_timer);
 		mCountupTimer = (Chronometer)findViewById(R.id.countup_timer);
 		mButton = (ToggleButton)findViewById(R.id.button);
