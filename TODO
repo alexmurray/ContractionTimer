@@ -1,6 +1,2 @@
-* Graph
-- Debug graph ticks - not drawing lower resolution ticks (i.e mins)
-   when showing higher resolution ticks (i.e. secs)
-
 * List
 - Add option to manually enter a contraction / edit existing contractions
