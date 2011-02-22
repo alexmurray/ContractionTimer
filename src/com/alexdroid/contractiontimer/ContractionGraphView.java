@@ -160,11 +160,11 @@ public class ContractionGraphView extends HorizontalScrollView {
 			Log.v(TAG, "mResolution: " + mResolution);
 			for (int i = 0; i < NUM_TIME_SCALES; i++) {
 				/* draw ticks for each time scale but only if resolution is
-				 * okay - i.e. if ticks will be more than 5 pixels apart then
+				 * okay - i.e. if ticks will be more than 10 pixels apart then
 				 * draw */
 				double dp = mResolution * LENGTHS[i];
 
-				if (dp > 5.0) {
+				if (dp > 10.0) {
 					/* round up to next unit */
 					long ms = (mMinMillis + LENGTHS[i]);
 					ms -= (ms % LENGTHS[i]);
@@ -223,13 +223,20 @@ public class ContractionGraphView extends HorizontalScrollView {
 
 				path.moveTo(start, (float)h);
 				path.cubicTo(start + (length / 3),  h - height,
-						start + (2 * length / 3), h - height,
-						start + length, (float)h);
+					     start + (2 * length / 3), h - height,
+					     start + length, (float)h);
 				path.close();
 			}
 
+			/* draw outline */
 			mDrawable.setBounds(0, 0, w, h);
 			mDrawable.setShape(new PathShape(path, w, h));
+			mDrawable.getPaint().setStyle(Paint.Style.STROKE);
+			mDrawable.getPaint().setAlpha(255);
+			mDrawable.draw(canvas);
+			/* draw fill */
+			mDrawable.getPaint().setStyle(Paint.Style.FILL);
+			mDrawable.getPaint().setAlpha(150);
 			mDrawable.draw(canvas);
 
 			/* draw x axis */
