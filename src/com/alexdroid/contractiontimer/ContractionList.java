@@ -4,13 +4,13 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import java.text.DateFormat;
 import java.util.ArrayList;
 
 public class ContractionList extends ListActivity {
@@ -52,8 +52,10 @@ public class ContractionList extends ListActivity {
 				TextView interval = (TextView)v.findViewById(R.id.contraction_interval_view);
 				if (start != null) {
 					start.setText(getString(R.string.start_label_text) +
-						       "\n" +
-						      DateFormat.getInstance().format(contraction.getStartMillis()));
+						      "\n" +
+						      DateFormat.getDateFormat(this.getContext()).format(contraction.getStartMillis()) +
+						      " " +
+						      DateFormat.getTimeFormat(this.getContext()).format(contraction.getStartMillis()));
 				}
 				if (length != null) {
 					length.setText(getString(R.string.length_label_text) +
