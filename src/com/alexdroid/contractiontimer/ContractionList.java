@@ -53,9 +53,11 @@ public class ContractionList extends ListActivity {
 				if (start != null) {
 					start.setText(getString(R.string.start_label_text) +
 						      "\n" +
-						      DateFormat.getDateFormat(this.getContext()).format(contraction.getStartMillis()) +
-						      " " +
-						      DateFormat.getTimeFormat(this.getContext()).format(contraction.getStartMillis()));
+						      DateUtils.formatDateTime(this.getContext(),
+									       contraction.getStartMillis(),
+									       DateUtils.FORMAT_SHOW_TIME |
+									       DateUtils.FORMAT_SHOW_DATE |
+									       DateUtils.FORMAT_NUMERIC_DATE));
 				}
 				if (length != null) {
 					length.setText(getString(R.string.length_label_text) +
