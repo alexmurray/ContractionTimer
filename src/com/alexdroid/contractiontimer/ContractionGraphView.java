@@ -2,7 +2,6 @@ package com.alexdroid.contractiontimer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -80,7 +79,8 @@ public class ContractionGraphView extends HorizontalScrollView {
 		 * pixel per 20 milliseconds */
 		private static final double MAX_RESOLUTION = 0.05;
 
-		private ShapeDrawable mDrawable;
+		private Path mPath;
+		private Paint mGraphPaint;
 		private Paint mTextPaint;
 		private ArrayList<Contraction> mContractions;
 		private long mMaxLengthMillis;
@@ -93,13 +93,14 @@ public class ContractionGraphView extends HorizontalScrollView {
 
 		public ContractionGraph(Context context) {
 			super(context);
-			mDrawable = new ShapeDrawable();
-			mTextPaint = new Paint(mDrawable.getPaint());
+			mPath = new Path();
+			mGraphPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			mTextPaint = new Paint();
 			mTextPaint.setTextAlign(Paint.Align.CENTER);
 		}
 
 		public void setGraphColor(int color) {
-			mDrawable.getPaint().setColor(color);
+			mGraphPaint.setColor(color);
 		}
 
 		public void setTextColor(int color) {
@@ -181,7 +182,7 @@ public class ContractionGraphView extends HorizontalScrollView {
 						/* label every tick if can fit,
 						 * otherwise label every 10th
 						 * tick */
-						if (dp > mDrawable.getPaint().measureText(FORMATS[i]) ||
+						if (dp > mGraphPaint.measureText(FORMATS[i]) ||
 						    (ms / 10) % LENGTHS[i] == 0) {
 							canvas.drawText((String)DateFormat.format(FORMATS[i], ms),
 								   	(float)x, (float)h, mTextPaint);
@@ -212,7 +213,8 @@ public class ContractionGraphView extends HorizontalScrollView {
 
 			float w_scale = (float)w / (float)(mMaxMillis - mMinMillis);
 
-			Path path = new Path();
+			/* clear any existing path */
+			mPath.reset();
 
 			/* draw contractions into path */
 			for (Contraction contraction : mContractions) {
@@ -221,23 +223,21 @@ public class ContractionGraphView extends HorizontalScrollView {
 				float height = ((float)contraction.getLengthMillis() / (float)mMaxLengthMillis) * h;
 				Log.v(TAG, "start: " + start + " height: " + height);
 
-				path.moveTo(start, (float)h);
-				path.cubicTo(start + (length / 3),  h - height,
+				mPath.moveTo(start, (float)h);
+				mPath.cubicTo(start + (length / 3),  h - height,
 					     start + (2 * length / 3), h - height,
 					     start + length, (float)h);
-				path.close();
+				mPath.close();
 			}
 
 			/* draw outline */
-			mDrawable.setBounds(0, 0, w, h);
-			mDrawable.setShape(new PathShape(path, w, h));
-			mDrawable.getPaint().setStyle(Paint.Style.STROKE);
-			mDrawable.getPaint().setAlpha(255);
-			mDrawable.draw(canvas);
+			mGraphPaint.setStyle(Paint.Style.STROKE);
+			mGraphPaint.setAlpha(255);
+			canvas.drawPath(mPath, mGraphPaint);
 			/* draw fill */
-			mDrawable.getPaint().setStyle(Paint.Style.FILL);
-			mDrawable.getPaint().setAlpha(150);
-			mDrawable.draw(canvas);
+			mGraphPaint.setStyle(Paint.Style.FILL);
+			mGraphPaint.setAlpha(150);
+			canvas.drawPath(mPath, mGraphPaint);
 
 			/* draw x axis */
 			canvas.drawLine(0.f, (float)h, (float)w, (float)h, mTextPaint);
