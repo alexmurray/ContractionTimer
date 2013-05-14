@@ -214,6 +214,7 @@ public class ContractionTimer extends Activity
 		boolean available = ((mStore.getRecentContractions(1, false)).size() > 0);
 		menu.findItem(R.id.list_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.graph_contractions_menu_item).setEnabled(available);
+		menu.findItem(R.id.export_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.undo_menu_item).setEnabled(available);
 		menu.findItem(R.id.reset_menu_item).setEnabled(available);
 		return true;
@@ -261,6 +262,16 @@ public class ContractionTimer extends Activity
 		case R.id.graph_contractions_menu_item:
 			startActivity(new Intent(this, ContractionGrapher.class));
 			return true;
+		case R.id.export_contractions_menu_item:
+                    Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, R.string.exported_contractions_subject);
+                    intent.putExtra(Intent.EXTRA_TEXT,
+                                    ContractionExporter.exportToCSV(this, mStore.getAllContractions()));
+                    startActivity(Intent.createChooser(intent,
+                                                       getString(R.string.export_contractions_chooser_title)));
+                    return true;
 		case R.id.undo_menu_item:
 			/* either delete most recent contraction if has no
 			   duration or set duration 0 to undo last action */

@@ -16,6 +16,9 @@
     <string name="stop_text">Stop</string>
     <string name="list_contractions_menu_item_text">List Contractions</string>
     <string name="graph_contractions_menu_item_text">Graph Contractions</string>
+    <string name="export_contractions_menu_item_text">Export Contractions</string>
+    <string name="export_contractions_chooser_title">How would you like to export your contractions data?</string>
+    <string name="exported_contractions_subject">My Contractions Data</string>
     <string name="undo_menu_item_text">Undo</string>
     <string name="reset_menu_item_text">Reset</string>
     <string name="confirm_reset_text">Delete all previously recorded contractions data?</string>
