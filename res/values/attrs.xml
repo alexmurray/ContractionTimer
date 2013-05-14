@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-     <declare-styleable name="ContractionGraphView">
-        <attr name="axisColor" format="color" />
-        <attr name="graphColor" format="color" />
-        <attr name="textColor" format="color" />
-        <attr name="textSize" format="dimension" />
-    </declare-styleable>
-</resources>

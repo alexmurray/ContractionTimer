@@ -213,7 +213,6 @@ public class ContractionTimer extends Activity
 		 * */
 		boolean available = ((mStore.getRecentContractions(1, false)).size() > 0);
 		menu.findItem(R.id.list_contractions_menu_item).setEnabled(available);
-		menu.findItem(R.id.graph_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.export_contractions_menu_item).setEnabled(available);
 		menu.findItem(R.id.undo_menu_item).setEnabled(available);
 		menu.findItem(R.id.reset_menu_item).setEnabled(available);
@@ -258,9 +257,6 @@ public class ContractionTimer extends Activity
 		switch (item.getItemId()) {
 		case R.id.list_contractions_menu_item:
 			startActivity(new Intent(this, ContractionList.class));
-			return true;
-		case R.id.graph_contractions_menu_item:
-			startActivity(new Intent(this, ContractionGrapher.class));
 			return true;
 		case R.id.export_contractions_menu_item:
                     Intent intent = new Intent(android.content.Intent.ACTION_SEND);
