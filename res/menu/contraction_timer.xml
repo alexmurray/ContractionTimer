@@ -3,9 +3,6 @@
     <item android:id="@+id/list_contractions_menu_item"
           android:icon="@android:drawable/ic_menu_info_details"
           android:title="@string/list_contractions_menu_item_text" />
-    <item android:id="@+id/graph_contractions_menu_item"
-          android:icon="@android:drawable/ic_menu_view"
-          android:title="@string/graph_contractions_menu_item_text" />
     <item android:id="@+id/export_contractions_menu_item"
           android:icon="@android:drawable/ic_menu_share"
           android:title="@string/export_contractions_menu_item_text" />

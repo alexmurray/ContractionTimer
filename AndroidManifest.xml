@@ -28,13 +28,5 @@
 	<category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
     </activity>
-    <activity
-	android:name="ContractionGrapher"
-	android:label="@string/contraction_graph_name">
-      <intent-filter>
-	<action android:name="android.intent.action.VIEW" />
-	<category android:name="android.intent.category.DEFAULT" />
-      </intent-filter>
-    </activity>
   </application>
 </manifest>
